@@ -16,7 +16,7 @@
 //!     let pkcs12 = Pkcs12Certificate::from_file("resources/certificado.pfx", "minha-senha-secreta")?;
 //!     let dfe = Dfe::new().set_ini(ini).set_pkcs12(pkcs12);
 //!     let xml = dfe.status_servico(Uf::Mt, Ambiente::Homologacao)?;
-//!     println!("XML retornado: {}", String::from_utf8_lossy(xml.as_ref()));
+//!     println!("XML retornado: {}", String::from_utf8_lossy(&xml));
 //!     Ok(())
 //! }
 //! ```
@@ -26,6 +26,7 @@ mod dfe;
 mod pkcs12;
 mod soap;
 mod tipos;
+mod util;
 mod webservices;
 
 pub use client::*;
@@ -33,4 +34,5 @@ pub use dfe::*;
 pub use pkcs12::*;
 pub use soap::*;
 pub use tipos::*;
+pub use util::*;
 pub use webservices::*;

@@ -18,7 +18,7 @@ fn main() -> result::Result<(), Box<dyn error::Error>> {
     let pkcs12 = Pkcs12Certificate::from_file("resources/certificado.pfx", "minha-senha-secreta")?;
     let dfe = Dfe::new().set_ini(ini).set_pkcs12(pkcs12);
     let xml = dfe.status_servico(Uf::Mt, Ambiente::Homologacao)?;
-    println!("XML retornado: {}", String::from_utf8_lossy(xml.as_ref()));
+    println!("XML retornado: {}", String::from_utf8_lossy(&xml));
     Ok(())
 }
 ```

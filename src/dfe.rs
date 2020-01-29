@@ -6,6 +6,7 @@ use crate::{
     client::{ClientBuilder, ClientError},
     soap,
     tipos::{Ambiente, Documento, Modelo, Servico, Tipo, Uf},
+    util,
     webservices::{WebServicesBuilder, WebServicesBuilderError, WebServicesIni},
     Pkcs12Certificate,
 };
@@ -24,6 +25,10 @@ quick_error! {
         OperacaoInexistente {
             from()
             display("Operação inexistente para este serviço")
+        }
+        ChaveInvalida(chave: String) {
+            from()
+            display("Chave de NF-e inválida: {}", chave)
         }
     }
 }
@@ -88,7 +93,9 @@ impl Dfe {
     }
 
     pub fn consultar_xml(self, uf: Uf, ambiente: Ambiente, chave: &str) -> DfeResult {
-        //TODO: validar chave
+        if !util::validar_chave(chave) {
+            return Err(DfeError::ChaveInvalida(chave.to_string()));
+        }
         self.send(
             uf,
             ambiente,
