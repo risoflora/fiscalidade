@@ -21,12 +21,12 @@
 //! }
 //! ```
 
-pub mod client;
-pub mod dfe;
-pub mod pkcs12;
-pub mod soap;
-pub mod tipos;
-pub mod webservices;
+mod client;
+mod dfe;
+mod pkcs12;
+mod soap;
+mod tipos;
+mod webservices;
 
 pub use client::*;
 pub use dfe::*;

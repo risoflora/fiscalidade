@@ -5,17 +5,22 @@ use reqwest::blocking::{Client as ReqwestClient, ClientBuilder as ReqwestClientB
 
 use crate::Pkcs12Certificate;
 
+/// Tempo padrão de timeout para conexão de client HTTP.
 pub const CLIENT_CONNECT_TIMEOUT: u64 = 5;
 
+/// Tempo padrão de timeout para transmissão de dados de client HTTP.
 pub const CLIENT_TIMEOUT: u64 = 30;
 
 quick_error! {
     #[derive(Debug)]
+    /// Tipo para tratar erros relacionados a I/O e ao client HTTP.
     pub enum ClientError {
+        /// Erros relacionados a I/O.
         Io(err: io::Error) {
             from()
             display("Erro de I/O no client HTTP: {}", err)
         }
+        /// Erros relacionados a HTTP.
         Reqwest(err: reqwest::Error) {
             from()
             display("Erro no client HTTP: {}", err)
@@ -23,14 +28,17 @@ quick_error! {
     }
 }
 
+/// Tipo para tratar retorno do client HTTP.
 pub type ClientResult = result::Result<Vec<u8>, ClientError>;
 
+/// Client HTTP com suporte a TLS e compressão de dados.
 #[derive(Debug)]
 pub struct Client {
     inner: ReqwestClient,
 }
 
 impl Client {
+    /// Executa requisição ao servidor informando URL e informações de SOAP como action e XML.
     pub fn execute(&self, url: &str, action: &str, xml: Vec<u8>) -> ClientResult {
         //TODO: tentativas
         let mut body = Vec::new();
@@ -46,14 +54,17 @@ impl Client {
     }
 }
 
-pub type ClientBuilderResult = result::Result<Client, ClientError>;
-
+/// Construtor de clients HTTP usando [build pattern](https://en.wikipedia.org/wiki/Builder_pattern).
 #[derive(Debug)]
 pub struct ClientBuilder {
     inner: ReqwestClientBuilder,
 }
 
+/// Tipo para tratar retorno do builder de client HTTP.
+pub type ClientBuilderResult = result::Result<Client, ClientError>;
+
 impl ClientBuilder {
+    /// Cria uma nova instância do builder de client HTTP.
     pub fn new() -> Self {
         Self {
             inner: ReqwestClientBuilder::new()
@@ -65,22 +76,27 @@ impl ClientBuilder {
         }
     }
 
+    /// Aplica certificado PKCS12 ao client HTTP criado.
     pub fn set_pkcs12(self, pkcs12: Pkcs12Certificate) -> Self {
         self.with_inner(|inner| inner.identity(pkcs12.into_inner()))
     }
 
+    /// Aplica tempo máximo de timeout para conexão do client HTTP criado.
     pub fn set_connect_timeout(self, timeout: Duration) -> Self {
         self.with_inner(|inner| inner.connect_timeout(timeout))
     }
 
+    /// Aplica tempo máximo de timeout para transmissão de dados do client HTTP criado.
     pub fn set_timeout(self, timeout: Duration) -> Self {
         self.with_inner(|inner| inner.timeout(timeout))
     }
 
+    /// Torna o client HTTP criado mais verboso, i.e. emite mais informações de log.
     pub fn set_verbose(self, verbose: bool) -> Self {
         self.with_inner(move |inner| inner.connection_verbose(verbose))
     }
 
+    /// Constrói novo client HTTP pré-configurado.
     pub fn build(self) -> ClientBuilderResult {
         Ok(Client {
             inner: self.inner.build()?,

@@ -24,6 +24,18 @@ pub fn format_dados_msg(tipo: &str, dados: &str, operacao: &str) -> String {
 }
 
 #[inline]
+pub fn format_envelope(body: &str) -> String {
+    format!(
+        concat!(
+            "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">",
+            "<soap:Body>{body}</soap:Body>",
+            "</soap:Envelope>"
+        ),
+        body = body
+    )
+}
+
+#[inline]
 pub fn format_cons_stat_serv(
     cuf: u8,
     tp_amb: u8,
@@ -114,17 +126,5 @@ pub fn format_cons_sit(
         )
         .as_str(),
         operacao,
-    )
-}
-
-#[inline]
-pub fn format_envelope(body: &str) -> String {
-    format!(
-        concat!(
-            "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">",
-            "<soap:Body>{body}</soap:Body>",
-            "</soap:Envelope>"
-        ),
-        body = body
     )
 }
