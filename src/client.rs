@@ -1,7 +1,7 @@
 use std::{io, result, time::Duration};
 
 use quick_error::quick_error;
-use reqwest::blocking::{Client as ReqwestClient, ClientBuilder as ReqwestClientBuilder};
+use reqwest::blocking::{Client as HttpClient, ClientBuilder as HttpClientBuilder};
 
 use crate::Pkcs12Certificate;
 
@@ -21,7 +21,7 @@ quick_error! {
             display("Erro de I/O no client HTTP: {}", err)
         }
         /// Erros relacionados a HTTP.
-        Reqwest(err: reqwest::Error) {
+        HttpClient(err: reqwest::Error) {
             from()
             display("Erro no client HTTP: {}", err)
         }
@@ -32,15 +32,15 @@ quick_error! {
 pub type ClientResult = result::Result<Vec<u8>, ClientError>;
 
 /// Client HTTP com suporte a TLS e compressão de dados.
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Client {
-    inner: ReqwestClient,
+    inner: HttpClient,
 }
 
 impl Client {
     /// Executa requisição ao servidor informando URL e informações de SOAP como action e XML.
     pub fn execute(&self, url: &str, action: &str, xml: Vec<u8>) -> ClientResult {
-        //TODO: tentativas
+        //TODO: tentativas de reconexão
         let mut body = Vec::new();
         let mut res = self
             .inner
@@ -57,7 +57,7 @@ impl Client {
 /// Construtor de clients HTTP usando [build pattern](https://en.wikipedia.org/wiki/Builder_pattern).
 #[derive(Debug)]
 pub struct ClientBuilder {
-    inner: ReqwestClientBuilder,
+    inner: HttpClientBuilder,
 }
 
 /// Tipo para tratar retorno do builder de client HTTP.
@@ -67,10 +67,10 @@ impl ClientBuilder {
     /// Cria uma nova instância do builder de client HTTP.
     pub fn new() -> Self {
         Self {
-            inner: ReqwestClientBuilder::new()
+            inner: HttpClientBuilder::new()
                 .danger_accept_invalid_certs(true)
                 .gzip(true)
-                .user_agent("Rust/NF-e")
+                .user_agent("Rust-Fiscalidade")
                 .timeout(Duration::from_secs(CLIENT_TIMEOUT))
                 .connect_timeout(Duration::from_secs(CLIENT_CONNECT_TIMEOUT)),
         }
@@ -106,7 +106,7 @@ impl ClientBuilder {
     #[inline]
     fn with_inner<F>(mut self, func: F) -> Self
     where
-        F: FnOnce(ReqwestClientBuilder) -> ReqwestClientBuilder,
+        F: FnOnce(HttpClientBuilder) -> HttpClientBuilder,
     {
         self.inner = func(self.inner);
         self

@@ -1,6 +1,6 @@
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum VersaoUrl {
     Ver100,
     Ver101,
@@ -384,7 +384,7 @@ impl TipoDocumento {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Documento {
     conteudo: Box<str>,
     tipo: TipoDocumento,

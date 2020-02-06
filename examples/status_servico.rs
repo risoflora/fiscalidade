@@ -19,6 +19,6 @@ fn main() -> result::Result<(), Box<dyn error::Error>> {
         Uf::from_str(&args[3]).unwrap(),
         Ambiente::from_str(&args[4]).unwrap(),
     )?;
-    println!("XML retornado: {}", String::from_utf8_lossy(xml.as_ref()));
+    println!("XML retornado: {}", String::from_utf8_lossy(&xml));
     Ok(())
 }

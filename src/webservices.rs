@@ -23,6 +23,7 @@ quick_error! {
     }
 }
 
+#[derive(Clone)]
 pub struct WebServicesIni {
     inner: Ini,
 }
@@ -97,6 +98,7 @@ quick_error! {
     }
 }
 
+#[derive(Clone)]
 pub struct WebServicesBuilder {
     ini: Option<WebServicesIni>,
     uf: Option<Uf>,
