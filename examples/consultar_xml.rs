@@ -1,12 +1,13 @@
 //! Exemplo básico de como consultar XML via chave.
 
+extern crate anyhow;
 extern crate fiscalidade;
 
-use std::{env, error, result};
+use std::env;
 
 use fiscalidade::{Ambiente, Dfe, Pkcs12Certificate, Uf, WebServices};
 
-fn main() -> result::Result<(), Box<dyn error::Error>> {
+fn main() -> anyhow::Result<()> {
     let args: Vec<String> = env::args().collect();
     if args.len() != 6 {
         println!("Uso: <certificado.pfx> <senha> <uf> <ambiente> <chave>");

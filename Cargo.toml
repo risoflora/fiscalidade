@@ -1,6 +1,6 @@
 [package]
 name = "fiscalidade"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Silvio Clecio (silvioprog) <silvioprog@gmail.com>"]
 license = "MIT/Apache-2.0"
 description = "Biblioteca Rust para geração, validação, assinatura de XMLs de Documentos Fiscais e transmissão com webservices da SEFAZ."
@@ -21,6 +21,8 @@ edition = "2018"
 [dependencies]
 reqwest = { version = "^0.10", features = ["blocking", "gzip", "native-tls"] }
 rust-ini = "^0"
-quick-error = "^1"
 thiserror = "^1"
 regex = "^1"
+
+[dev-dependencies]
+anyhow = "^1"
