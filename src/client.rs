@@ -1,7 +1,7 @@
-use std::{io, result, time::Duration};
+use std::{result, time::Duration};
 
-use quick_error::quick_error;
 use reqwest::blocking::{Client as HttpClient, ClientBuilder as HttpClientBuilder};
+use thiserror::Error;
 
 use crate::Pkcs12Certificate;
 
@@ -11,21 +11,12 @@ pub const CLIENT_CONNECT_TIMEOUT: u64 = 5;
 /// Tempo padrão de timeout para transmissão de dados de client HTTP.
 pub const CLIENT_TIMEOUT: u64 = 30;
 
-quick_error! {
-    #[derive(Debug)]
-    /// Tipo para tratar erros relacionados a I/O e ao client HTTP.
-    pub enum ClientError {
-        /// Erros relacionados a I/O.
-        Io(err: io::Error) {
-            from()
-            display("Erro de I/O no client HTTP: {}", err)
-        }
-        /// Erros relacionados a HTTP.
-        HttpClient(err: reqwest::Error) {
-            from()
-            display("Erro no client HTTP: {}", err)
-        }
-    }
+#[derive(Error, Debug)]
+/// Tipo para tratar erros relacionados a I/O e ao client HTTP.
+pub enum ClientError {
+    /// Erros relacionados a HTTP.
+    #[error(transparent)]
+    HttpClient(#[from] reqwest::Error),
 }
 
 /// Tipo para tratar retorno do client HTTP.

@@ -1,27 +1,21 @@
 use std::{fs, io, path::Path, result};
 
-use quick_error::quick_error;
 use reqwest::Identity;
+use thiserror::Error;
 
 /// Objeto para manipulação de certificados PKCS #12.
 #[derive(Debug)]
 pub struct Pkcs12Certificate(Identity);
 
-quick_error! {
-    #[derive(Debug)]
-    /// Tipo para tratar erros relacionados a I/O e leitura de certificado PKCS #12.
-    pub enum Pkcs12CertificateError {
-        /// Erros relacionados a I/O.
-        Io(err: io::Error) {
-            from()
-            display("Erro de I/O ao carregar certificado: {}", err)
-        }
-        /// Erros relacionados a leitura de certificado PKCS #12.
-        Pkcs12(err: reqwest::Error){
-            from()
-            display("Erro ao carregar certificado: {}", err)
-        }
-    }
+#[derive(Error, Debug)]
+/// Tipo para tratar erros relacionados a I/O e leitura de certificado PKCS #12.
+pub enum Pkcs12CertificateError {
+    /// Erros relacionados a I/O.
+    #[error(transparent)]
+    Io(#[from] io::Error),
+    /// Erros relacionados a leitura de certificado PKCS #12.
+    #[error(transparent)]
+    Pkcs12(#[from] reqwest::Error),
 }
 
 /// Tipo para tratar retorno de leitura do certificado PKCS #12.

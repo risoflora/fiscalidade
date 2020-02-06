@@ -1,6 +1,6 @@
 use std::result;
 
-use quick_error::quick_error;
+use thiserror::Error;
 
 use crate::{
     client::{ClientBuilder, ClientError},
@@ -11,26 +11,16 @@ use crate::{
     Pkcs12Certificate,
 };
 
-quick_error! {
-    #[derive(Debug)]
-    pub enum DfeError {
-        WebServices(err: WebServicesBuilderError) {
-            from()
-            display("Erro ao construir webservice: {}", err)
-        }
-        Client(err: ClientError) {
-            from()
-            display("Erro ao construir client: {}", err)
-        }
-        OperacaoInexistente {
-            from()
-            display("Operação inexistente para este serviço")
-        }
-        ChaveInvalida(chave: String) {
-            from()
-            display("Chave de NF-e inválida: {}", chave)
-        }
-    }
+#[derive(Error, Debug)]
+pub enum DfeError {
+    #[error(transparent)]
+    WebServices(#[from] WebServicesBuilderError),
+    #[error(transparent)]
+    Client(#[from] ClientError),
+    #[error("Operação inexistente para este serviço")]
+    OperacaoInexistente,
+    #[error("Chave de NF-e inválida: {0}")]
+    ChaveInvalida(String),
 }
 
 pub struct Dfe {
