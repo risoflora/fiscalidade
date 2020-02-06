@@ -20,6 +20,10 @@
 //! }
 //! ```
 
+extern crate ini;
+extern crate reqwest;
+extern crate thiserror;
+
 mod client;
 mod dfe;
 mod pkcs12;
@@ -28,10 +32,10 @@ mod tipos;
 mod util;
 mod webservices;
 
-pub use client::*;
-pub use dfe::*;
-pub use pkcs12::*;
-pub use soap::*;
-pub use tipos::*;
-pub use util::*;
-pub use webservices::*;
+pub use crate::client::*;
+pub use crate::dfe::*;
+pub use crate::pkcs12::*;
+pub use crate::soap::*;
+pub use crate::tipos::*;
+pub use crate::util::*;
+pub use crate::webservices::*;

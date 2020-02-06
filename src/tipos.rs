@@ -11,7 +11,7 @@ pub enum VersaoUrl {
 impl VersaoUrl {
     #[inline]
     pub fn as_str(&self) -> &'static str {
-        use VersaoUrl::*;
+        use crate::VersaoUrl::*;
         match *self {
             Ver100 => "1.00",
             Ver101 => "1.01",
@@ -61,7 +61,7 @@ impl fmt::Display for Uf {
 impl Uf {
     #[inline]
     pub fn from_str(uf: &str) -> Option<Self> {
-        use Uf::*;
+        use crate::Uf::*;
         match uf.to_uppercase().as_str() {
             "RO" => Some(Ro),
             "AC" => Some(Ac),
@@ -96,7 +96,7 @@ impl Uf {
 
     #[inline]
     pub fn as_str(&self) -> &'static str {
-        use Uf::*;
+        use crate::Uf::*;
         match *self {
             Ro => "RO",
             Ac => "AC",
@@ -130,7 +130,7 @@ impl Uf {
 
     #[inline]
     pub fn cuf(&self) -> u8 {
-        use Uf::*;
+        use crate::Uf::*;
         match *self {
             Ro => 11,
             Ac => 12,
@@ -172,7 +172,7 @@ pub enum Ambiente {
 impl Ambiente {
     #[inline]
     pub fn as_str(&self) -> &'static str {
-        use Ambiente::*;
+        use crate::Ambiente::*;
         match *self {
             Producao => "P",
             Homologacao => "H",
@@ -181,7 +181,7 @@ impl Ambiente {
 
     #[inline]
     pub fn from_str(ambiente: &str) -> Option<Self> {
-        use Ambiente::*;
+        use crate::Ambiente::*;
         let c = match ambiente.chars().next() {
             Some(c) => c,
             None => return None,
@@ -195,7 +195,7 @@ impl Ambiente {
 
     #[inline]
     pub fn tp_amb(&self) -> u8 {
-        use Ambiente::*;
+        use crate::Ambiente::*;
         match *self {
             Producao => 1,
             Homologacao => 2,
@@ -212,7 +212,7 @@ pub enum Modelo {
 impl Modelo {
     #[inline]
     pub fn as_str(&self) -> &'static str {
-        use Modelo::*;
+        use crate::Modelo::*;
         match *self {
             Nfe => "NFe",
             Nfce => "NFCe",
@@ -221,7 +221,7 @@ impl Modelo {
 
     #[inline]
     pub fn codigo(&self) -> u8 {
-        use Modelo::*;
+        use crate::Modelo::*;
         match *self {
             Nfe => 55,
             Nfce => 65,
@@ -239,7 +239,7 @@ pub enum Tipo {
 impl Tipo {
     #[inline]
     pub fn as_str(&self) -> &'static str {
-        use Tipo::*;
+        use crate::Tipo::*;
         match *self {
             Nfe => "nfe",
             Cte => "cte",
@@ -249,7 +249,7 @@ impl Tipo {
 
     #[inline]
     pub fn nome(&self) -> &'static str {
-        use Tipo::*;
+        use crate::Tipo::*;
         match *self {
             Nfe => "NFe",
             Cte => "CTe",
@@ -278,7 +278,7 @@ pub enum Servico {
 
 impl fmt::Display for Servico {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use Servico::*;
+        use crate::Servico::*;
         match *self {
             StatusServico => write!(fmt, "Status Serviço"),
             Envio => write!(fmt, "Envio"),
@@ -301,7 +301,7 @@ impl fmt::Display for Servico {
 impl Servico {
     #[inline]
     pub fn nome(&self) -> String {
-        use Servico::*;
+        use crate::Servico::*;
         let ver = self.versao_url().as_str();
         match *self {
             StatusServico => format!("NfeStatusServico_{}", ver),
@@ -323,7 +323,7 @@ impl Servico {
 
     #[inline]
     pub fn operacao(&self) -> Option<&str> {
-        use Servico::*;
+        use crate::Servico::*;
         match *self {
             StatusServico => Some("NFeStatusServico4"),
             Envio => Some("NFeAutorizacao4"),
@@ -344,8 +344,8 @@ impl Servico {
 
     #[inline]
     pub fn versao_url(&self) -> VersaoUrl {
-        use Servico::*;
-        use VersaoUrl::*;
+        use crate::Servico::*;
+        use crate::VersaoUrl::*;
         match *self {
             StatusServico => Ver400,
             Envio => Ver400,
@@ -375,7 +375,7 @@ pub enum TipoDocumento {
 impl TipoDocumento {
     #[inline]
     pub fn as_str(&self) -> &'static str {
-        use TipoDocumento::*;
+        use crate::TipoDocumento::*;
         match *self {
             Cpf => "CPF",
             Cnpj => "CNPJ",
