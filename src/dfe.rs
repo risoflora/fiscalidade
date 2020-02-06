@@ -7,7 +7,7 @@ use crate::{
     soap,
     tipos::{Ambiente, Documento, Modelo, Servico, Tipo, Uf},
     util,
-    webservices::{WebServicesBuilder, WebServicesBuilderError, WebServicesIni},
+    webservices::{WebServices, WebServicesBuilder, WebServicesBuilderError},
     Pkcs12Certificate,
 };
 
@@ -50,8 +50,8 @@ impl Dfe {
         }
     }
 
-    pub fn set_ini(self, ini: WebServicesIni) -> Self {
-        self.with_ws_builder(|ws_builder| ws_builder.set_ini(ini))
+    pub fn set_webservices(self, webservices: WebServices) -> Self {
+        self.with_ws_builder(|ws_builder| ws_builder.set_ini(webservices))
     }
 
     pub fn set_pkcs12(self, pkcs12: Pkcs12Certificate) -> Self {

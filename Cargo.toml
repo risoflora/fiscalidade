@@ -22,4 +22,5 @@ edition = "2018"
 reqwest = { version = "^0.10", features = ["blocking", "gzip", "native-tls"] }
 rust-ini = "^0"
 quick-error = "^1"
+thiserror = "^1"
 regex = "^1"

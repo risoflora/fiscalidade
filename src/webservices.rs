@@ -1,36 +1,26 @@
-use std::{io, path::Path, result};
+use std::{path::Path, result};
 
 use ini::Ini;
-use quick_error::quick_error;
+use thiserror::Error;
 
-use crate::tipos::{Ambiente, Modelo, Servico, Uf};
+use crate::tipos::{self, Ambiente, Modelo, Servico, Uf};
 
-quick_error! {
-    #[derive(Debug)]
-    pub enum WebServicesIniError {
-        Io(err: io::Error) {
-            from()
-            display("Erro de I/O ao carregar INI de webservices: {}", err)
-        }
-        Ini(err: ini::ini::Error) {
-            from()
-            display("Erro ao carregar INI de webservices: {}", err)
-        }
-        IniParse(err: ini::ini::ParseError) {
-            from()
-            display("Erro a fazer parse no INI de webservices: {}", err)
-        }
-    }
+#[derive(Error, Debug)]
+pub enum WebServicesError {
+    #[error(transparent)]
+    Ini(#[from] ini::ini::Error),
+    #[error(transparent)]
+    IniParse(#[from] ini::ini::ParseError),
 }
 
 #[derive(Clone)]
-pub struct WebServicesIni {
+pub struct WebServices {
     inner: Ini,
 }
 
-pub type WebServicesIniResult = result::Result<WebServicesIni, WebServicesIniError>;
+pub type WebServicesIniResult = result::Result<WebServices, WebServicesError>;
 
-impl WebServicesIni {
+impl WebServices {
     #[inline]
     fn make(ini: Ini) -> WebServicesIniResult {
         Ok(Self { inner: ini })
@@ -53,7 +43,7 @@ impl WebServicesIni {
     }
 }
 
-impl Default for WebServicesIni {
+impl Default for WebServices {
     fn default() -> Self {
         Self {
             inner: Default::default(),
@@ -61,46 +51,30 @@ impl Default for WebServicesIni {
     }
 }
 
-pub type WebService = String;
-
-quick_error! {
-    #[derive(Debug)]
-    pub enum WebServicesBuilderError {
-        IniNaoInformado {
-            from()
-            display("INI de webservices não informado")
-        }
-        UfNaoInformada {
-            from()
-            display("UF não informada")
-        }
-        AmbienteNaoInformado {
-            from()
-            display("Ambiente não informado")
-        }
-        ServicoNaoInformado {
-            from()
-            display("Serviço não informado")
-        }
-        ModeloNaoInformado {
-            from()
-            display("Modelo de NF não informado")
-        }
-        UfSemWebServiceConsultaCadastro {
-            from()
-            display("UF não possui webservice para consulta de cadastro")
-        }
-        WebServiceNaoEncontrado(uf: Uf, servico: Servico) {
-            from(tipos::Uf)
-            from(tipos::Servico)
-            display("WebService não encontrado para {}: {}", uf, servico)
-        }
-    }
+#[derive(Error, Debug)]
+pub enum WebServicesBuilderError {
+    #[error("INI de webservices não informado")]
+    IniNaoInformado,
+    #[error("UF não informada")]
+    UfNaoInformada,
+    #[error("Ambiente não informado")]
+    AmbienteNaoInformado,
+    #[error("Serviço não informado")]
+    ServicoNaoInformado,
+    #[error("Modelo de NF não informado")]
+    ModeloNaoInformado,
+    #[error("UF não possui webservice para consulta de cadastro")]
+    UfSemWebServiceConsultaCadastro,
+    #[error("WebService não encontrado para {}: {}", uf, servico)]
+    WebServiceNaoEncontrado {
+        uf: tipos::Uf,
+        servico: tipos::Servico,
+    },
 }
 
 #[derive(Clone)]
 pub struct WebServicesBuilder {
-    ini: Option<WebServicesIni>,
+    ini: Option<WebServices>,
     uf: Option<Uf>,
     ambiente: Option<Ambiente>,
     servico: Option<Servico>,
@@ -108,7 +82,7 @@ pub struct WebServicesBuilder {
     contingencia: bool,
 }
 
-pub type WebServicesBuilderResult = result::Result<WebService, WebServicesBuilderError>;
+pub type WebServicesBuilderResult = result::Result<String, WebServicesBuilderError>;
 
 impl WebServicesBuilder {
     pub fn new() -> Self {
@@ -122,7 +96,7 @@ impl WebServicesBuilder {
         }
     }
 
-    pub fn set_ini(mut self, ini: WebServicesIni) -> Self {
+    pub fn set_ini(mut self, ini: WebServices) -> Self {
         self.ini = Some(ini);
         self
     }
@@ -223,11 +197,7 @@ impl WebServicesBuilder {
         }
         let url = match ini.get_from(secao.as_str(), servico.nome().as_str()) {
             Some(url) => url,
-            None => {
-                return Err(WebServicesBuilderError::WebServiceNaoEncontrado(
-                    uf, servico,
-                ))
-            }
+            None => return Err(WebServicesBuilderError::WebServiceNaoEncontrado { uf, servico }),
         };
         Ok(url.to_string())
     }
