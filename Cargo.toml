@@ -19,7 +19,7 @@ categories = [
 
 [dependencies]
 reqwest = { version = "^0.10", features = ["blocking", "gzip", "native-tls"] }
-rust-ini = { version = "^0", features = ["case-insensitive"] }
+rust-ini = { version = "^0.15", features = ["case-insensitive"] }
 thiserror = "^1"
 regex = "^1"
 
