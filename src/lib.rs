@@ -21,6 +21,7 @@
 //! ```
 
 extern crate ini;
+extern crate regex;
 extern crate reqwest;
 extern crate thiserror;
 
