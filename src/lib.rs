@@ -8,12 +8,14 @@
 //! extern crate anyhow;
 //! extern crate fiscalidade;
 //!
-//! use fiscalidade::{Ambiente, Dfe, Pkcs12Certificate, Uf, WebServices};
+//! use fiscalidade::{Ambiente, Dfe, Pkcs12Certificate, Tipo, Uf, WebServices};
 //!
 //! fn main() -> anyhow::Result<()> {
 //!     let webservices = WebServices::from_file("resources/webservices.ini")?;
 //!     let pkcs12 = Pkcs12Certificate::from_file("resources/certificado.pfx", "minha-senha-secreta")?;
-//!     let dfe = Dfe::new().set_webservices(webservices).set_pkcs12(pkcs12);
+//!     let dfe = Dfe::new(Tipo::Nfe)
+//!         .set_webservices(webservices)
+//!         .set_pkcs12(pkcs12);
 //!     let xml = dfe.status_servico(Uf::Mt, Ambiente::Homologacao)?;
 //!     println!("XML retornado: {}", String::from_utf8_lossy(&xml));
 //!     Ok(())

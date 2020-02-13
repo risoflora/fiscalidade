@@ -1,3 +1,5 @@
+/* TODO: migrar para yaml */
+
 use std::{path::Path, result};
 
 use ini::Ini;

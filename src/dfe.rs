@@ -32,11 +32,11 @@ pub struct Dfe {
 pub type DfeResult = result::Result<Vec<u8>, DfeError>;
 
 impl Dfe {
-    pub fn new() -> Self {
-        Dfe {
+    pub fn new(tipo: Tipo) -> Self {
+        Self {
             webservices_builder: WebServicesBuilder::new(),
             client_builder: ClientBuilder::new(),
-            tipo: Tipo::Nfe,
+            tipo,
         }
     }
 
