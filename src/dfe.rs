@@ -1,4 +1,4 @@
-use std::result;
+use std::{fmt, result};
 
 use thiserror::Error;
 
@@ -29,7 +29,16 @@ pub struct Dfe {
     tipo: Tipo,
 }
 
-pub type DfeResult = result::Result<Vec<u8>, DfeError>;
+#[derive(Debug)]
+pub struct Xml(pub Vec<u8>);
+
+pub type DfeResult = result::Result<Xml, DfeError>;
+
+impl fmt::Display for Xml {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", String::from_utf8_lossy(&self.0))
+    }
+}
 
 impl Dfe {
     pub fn new(tipo: Tipo) -> Self {
@@ -134,7 +143,7 @@ impl Dfe {
             soap::format_action(dfe.tipo.as_str(), operacao).as_str(),
             envelope.as_bytes().to_vec(),
         )?;
-        Ok(retorno)
+        Ok(Xml(retorno))
     }
 
     #[inline]

@@ -30,7 +30,7 @@ Adicione isto em seu `Cargo.toml`:
 
 ```ini
 [dependencies]
-fiscalidade = "0.2.3"
+fiscalidade = "0.3.0"
 ```
 
 e isto em seu _crate root_:

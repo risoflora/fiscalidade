@@ -7,8 +7,8 @@ use thiserror::Error;
 #[derive(Debug)]
 pub struct Pkcs12Certificate(Identity);
 
-#[derive(Error, Debug)]
 /// Tipo para tratar erros relacionados a I/O e leitura de certificado PKCS #12.
+#[derive(Error, Debug)]
 pub enum Pkcs12CertificateError {
     /// Erros relacionados a I/O.
     #[error(transparent)]

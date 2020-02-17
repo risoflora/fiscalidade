@@ -11,8 +11,8 @@ pub const CLIENT_CONNECT_TIMEOUT: u64 = 5;
 /// Tempo padrão de timeout para transmissão de dados de client HTTP.
 pub const CLIENT_TIMEOUT: u64 = 30;
 
-#[derive(Error, Debug)]
 /// Tipo para tratar erros relacionados a I/O e ao client HTTP.
+#[derive(Error, Debug)]
 pub enum ClientError {
     /// Erros relacionados a HTTP.
     #[error(transparent)]
