@@ -21,6 +21,12 @@ impl VersaoUrl {
     }
 }
 
+impl fmt::Display for VersaoUrl {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}", self.as_str())
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum Uf {
     Ro,
@@ -203,6 +209,12 @@ impl Ambiente {
     }
 }
 
+impl fmt::Display for Ambiente {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}", self.as_str())
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum Modelo {
     Nfe,
@@ -226,6 +238,12 @@ impl Modelo {
             Nfe => 55,
             Nfce => 65,
         }
+    }
+}
+
+impl fmt::Display for Modelo {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}", self.as_str())
     }
 }
 
@@ -266,6 +284,12 @@ impl Tipo {
             Cte => "CTe",
             Mdfe => "MDFe",
         }
+    }
+}
+
+impl fmt::Display for Tipo {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}", self.as_str())
     }
 }
 
@@ -395,6 +419,12 @@ impl TipoDocumento {
     }
 }
 
+impl fmt::Display for TipoDocumento {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}", self.as_str())
+    }
+}
+
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Documento {
     conteudo: Box<str>,
@@ -434,5 +464,11 @@ impl Documento {
     #[inline]
     pub fn conteudo(&self) -> String {
         self.conteudo.to_string()
+    }
+}
+
+impl fmt::Display for Documento {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}", self.conteudo)
     }
 }
