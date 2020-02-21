@@ -48,6 +48,7 @@ extern crate fiscalidade;
 - [x] leitura de certificado P12
 - [x] conexão segura usando biblioteca TLS _padrão_ do sistema
 - [x] configuração de _timeout_ da conexão e da comunicação com o webservice
+- [ ] embutir arquivo de webservices na biblioteca
 - [ ] mais serviços como envio de lote, consulta de recibo, inutilização, distribuição de DFe, etc.
 - [ ] tentativas de comunicação com o webservice
 - [ ] validação e assinatura de XML
@@ -61,9 +62,9 @@ extern crate fiscalidade;
 
 ## Contribuições
 
-Pull Requests e Issues são bem-vindos!
+Pull Requests e Issues são sempre bem-vindos! =)
 
-## License
+## Licença
 
 `fiscalidade` é distribuída sob qualquer uma das seguintes licenças:
 
