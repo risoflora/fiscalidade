@@ -1,6 +1,6 @@
 [package]
 name = "fiscalidade"
-version = "0.3.1"
+version = "0.4.0"
 authors = ["Silvio Clecio (silvioprog) <silvioprog@gmail.com>"]
 license = "MIT/Apache-2.0"
 description = "Biblioteca Rust para geração, validação, assinatura de XMLs de Documentos Fiscais e transmissão com webservices da SEFAZ."
@@ -25,3 +25,7 @@ regex = "^1"
 
 [dev-dependencies]
 anyhow = "^1"
+
+[features]
+default = ["embed-webservices"]
+embed-webservices = []

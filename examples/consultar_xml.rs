@@ -13,6 +13,9 @@ fn main() -> anyhow::Result<()> {
         println!("Uso: <certificado.pfx> <senha> <tipo> <uf> <ambiente> <chave>");
         return Ok(());
     }
+    #[cfg(feature = "embed-webservices")]
+    let webservices = WebServices::from_embedded()?;
+    #[cfg(not(feature = "embed-webservices"))]
     let webservices = WebServices::from_file("resources/webservices.ini")?;
     let pkcs12 = Pkcs12Certificate::from_file(&args[1], &args[2])?;
     let dfe = Dfe::new(Tipo::from_str(&args[3]).unwrap_or(Tipo::Nfe))
@@ -23,6 +26,6 @@ fn main() -> anyhow::Result<()> {
         Ambiente::from_str(&args[5]).unwrap(),
         &args[6],
     )?;
-    println!("XML retornado: {}", String::from_utf8_lossy(&xml));
+    println!("XML retornado: {}", xml);
     Ok(())
 }
