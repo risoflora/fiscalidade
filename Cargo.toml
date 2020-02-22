@@ -17,6 +17,10 @@ categories = [
     "web-programming",
 ]
 
+[features]
+default = ["embed_webservices"]
+embed_webservices = []
+
 [dependencies]
 reqwest = { version = "^0.10", features = ["blocking", "gzip", "native-tls"] }
 rust-ini = { version = "^0.15", features = ["case-insensitive"] }
@@ -25,7 +29,3 @@ regex = "^1"
 
 [dev-dependencies]
 anyhow = "^1"
-
-[features]
-default = ["embed_webservices"]
-embed_webservices = []
