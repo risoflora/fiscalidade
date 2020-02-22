@@ -40,7 +40,7 @@ impl WebServices {
         Self::make(Ini::load_from_file(path)?)
     }
 
-    #[cfg(feature = "embed-webservices")]
+    #[cfg(feature = "embed_webservices")]
     pub fn from_embedded() -> WebServicesIniResult {
         Self::make(Ini::load_from_str(include_str!(
             "../resources/webservices.ini"

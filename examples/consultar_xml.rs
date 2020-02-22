@@ -13,9 +13,9 @@ fn main() -> anyhow::Result<()> {
         println!("Uso: <certificado.pfx> <senha> <tipo> <uf> <ambiente> <chave>");
         return Ok(());
     }
-    #[cfg(feature = "embed-webservices")]
+    #[cfg(feature = "embed_webservices")]
     let webservices = WebServices::from_embedded()?;
-    #[cfg(not(feature = "embed-webservices"))]
+    #[cfg(not(feature = "embed_webservices"))]
     let webservices = WebServices::from_file("resources/webservices.ini")?;
     let pkcs12 = Pkcs12Certificate::from_file(&args[1], &args[2])?;
     let dfe = Dfe::new(Tipo::from_str(&args[3]).unwrap_or(Tipo::Nfe))
