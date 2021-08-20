@@ -49,7 +49,7 @@ extern crate fiscalidade;
 - [x] conexão segura usando biblioteca TLS _padrão_ do sistema
 - [x] configuração de _timeout_ da conexão e da comunicação com o webservice
 - [x] embutir arquivo de webservices na biblioteca
-- [ ] atualização de webservices (`webservices.ini`)
+- [x] atualização de webservices (`webservices.ini`)
 - [ ] validação e assinatura de XML
 - [ ] tentativas de comunicação com o webservice
 - [ ] chamadas async
