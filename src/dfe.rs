@@ -4,7 +4,7 @@ use thiserror::Error;
 
 use crate::{
     client::{ClientBuilder, ClientError},
-    soap,
+    soap12,
     tipos::{Ambiente, Documento, Modelo, Servico, Tipo, Uf},
     util,
     webservices::{WebServices, WebServicesBuilder, WebServicesBuilderError},
@@ -63,7 +63,7 @@ impl Dfe {
             ambiente,
             Servico::StatusServico,
             |cuf, tp_amb, tipo, _, versao, operacao| {
-                let xml = soap::format_cons_stat_serv(cuf, tp_amb, tipo, versao, operacao);
+                let xml = soap12::format_cons_stat_serv(cuf, tp_amb, tipo, versao, operacao);
                 //TODO: is_valid(versao, xml, "consStatServ");
                 xml
             },
@@ -77,7 +77,7 @@ impl Dfe {
             ambiente,
             Servico::ConsultaCadastro,
             |cuf, _, tipo, _, versao, operacao| {
-                let xml = soap::format_cons_cad(
+                let xml = soap12::format_cons_cad(
                     cuf,
                     tipo,
                     versao,
@@ -100,7 +100,7 @@ impl Dfe {
             ambiente,
             Servico::ConsultaXml,
             |_, tp_amb, tipo, tipo_nome, versao, operacao| {
-                let xml = soap::format_cons_sit(tp_amb, tipo, tipo_nome, versao, operacao, chave);
+                let xml = soap12::format_cons_sit(tp_amb, tipo, tipo_nome, versao, operacao, chave);
                 //TODO: is_valid(versao, xml, "consSit{nome}");
                 xml
             },
@@ -108,7 +108,7 @@ impl Dfe {
     }
 
     #[inline]
-    fn send<F>(self, uf: Uf, ambiente: Ambiente, servico: Servico, format_xml: F) -> DfeResult
+    fn send<F>(self, uf: Uf, ambiente: Ambiente, servico: Servico, envelope_fn: F) -> DfeResult
     where
         F: FnOnce(u8, u8, &str, &str, &str, &str) -> String,
     {
@@ -127,8 +127,8 @@ impl Dfe {
         let cli_builder = dfe.client_builder;
         let ws = ws_builder.build()?;
         let cli = cli_builder.build()?;
-        let envelope = soap::format_envelope(
-            format_xml(
+        let xml = soap12::format_xml(
+            envelope_fn(
                 uf.cuf(),
                 ambiente.tp_amb(),
                 dfe.tipo.as_str(),
@@ -140,8 +140,8 @@ impl Dfe {
         );
         let retorno = cli.execute(
             ws.as_str(),
-            soap::format_action(dfe.tipo.as_str(), operacao).as_str(),
-            envelope.as_bytes().to_vec(),
+            soap12::format_action(dfe.tipo.as_str(), operacao).as_str(),
+            xml.as_bytes().to_vec(),
         )?;
         Ok(Xml(retorno))
     }

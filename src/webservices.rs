@@ -10,9 +10,9 @@ use crate::tipos::{self, Ambiente, Modelo, Servico, Uf};
 #[derive(Error, Debug)]
 pub enum WebServicesError {
     #[error(transparent)]
-    Ini(#[from] ini::ini::Error),
+    Ini(#[from] ini::Error),
     #[error(transparent)]
-    IniParse(#[from] ini::ini::ParseError),
+    IniParse(#[from] ini::ParseError),
 }
 
 #[derive(Clone)]

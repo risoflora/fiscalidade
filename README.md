@@ -1,6 +1,6 @@
 # `fiscalidade`
 
-[WIP] Biblioteca Rust para geração, validação, assinatura de XMLs de Documentos Fiscais e transmissão com webservices da SEFAZ.
+[WIP] Biblioteca Rust para validação, assinatura e transmissão de XMLs para webservices SEFAZ.
 
 ## Exemplo
 
@@ -30,7 +30,7 @@ Adicione isto em seu `Cargo.toml`:
 
 ```ini
 [dependencies]
-fiscalidade = "0.3.0"
+fiscalidade = "0.4"
 ```
 
 e isto em seu _crate root_:
@@ -59,7 +59,6 @@ extern crate fiscalidade;
 - [ ] testes
 - [ ] documentação
 - [ ] mais exemplos
-- [ ] geração de XML
 - [ ] DANFE
 - [ ] GitHub Actions
 

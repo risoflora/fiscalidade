@@ -27,11 +27,19 @@ pub fn format_dados_msg(tipo: &str, dados: &str, operacao: &str) -> String {
 pub fn format_envelope(body: &str) -> String {
     format!(
         concat!(
-            "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\">",
-            "<soap:Body>{body}</soap:Body>",
-            "</soap:Envelope>"
+            "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">",
+            "<soap12:Body>{body}</soap12:Body>",
+            "</soap12:Envelope>"
         ),
         body = body
+    )
+}
+
+#[inline]
+pub fn format_xml(envelope: &str) -> String {
+    format!(
+        concat!("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "{envelope}"),
+        envelope = format_envelope(envelope)
     )
 }
 

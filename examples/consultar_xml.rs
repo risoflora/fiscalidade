@@ -1,4 +1,4 @@
-//! Exemplo básico de como consultar XML via chave.
+//! Exemplo básico de como consultar XML via chave da nota.
 
 extern crate anyhow;
 extern crate fiscalidade;
