@@ -50,9 +50,10 @@ extern crate fiscalidade;
 - [x] configuração de _timeout_ da conexão e da comunicação com o webservice
 - [x] embutir arquivo de webservices na biblioteca
 - [x] atualização de webservices (`webservices.ini`)
+- [ ] verificar se recursos (envelope, URLs etc.) estão atualizados
+- [ ] chamadas async
 - [ ] validação e assinatura de XML
 - [ ] tentativas de comunicação com o webservice
-- [ ] chamadas async
 - [ ] mais serviços como envio de lote, consulta de recibo, inutilização, distribuição de DFe, etc.
 - [ ] compressão no envio de lote
 - [ ] testes
@@ -60,6 +61,7 @@ extern crate fiscalidade;
 - [ ] mais exemplos
 - [ ] geração de XML
 - [ ] DANFE
+- [ ] GitHub Actions
 
 ## Contribuições
 

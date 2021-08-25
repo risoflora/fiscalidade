@@ -17,7 +17,7 @@
 //!         .set_webservices(webservices)
 //!         .set_pkcs12(pkcs12);
 //!     let xml = dfe.status_servico(Uf::Mt, Ambiente::Homologacao)?;
-//!     println!("XML retornado: {}", String::from_utf8_lossy(&xml));
+//!     println!("XML retornado: {}", xml);
 //!     Ok(())
 //! }
 //! ```
