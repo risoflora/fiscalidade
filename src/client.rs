@@ -1,6 +1,6 @@
 use std::{result, time::Duration};
 
-use reqwest::blocking::{Client as HttpClient, ClientBuilder as HttpClientBuilder};
+use reqwest::{Client as HttpClient, ClientBuilder as HttpClientBuilder};
 use thiserror::Error;
 
 use crate::Pkcs12Certificate;
@@ -30,18 +30,17 @@ pub struct Client {
 
 impl Client {
     /// Executa requisição ao servidor informando URL e informações de SOAP como action e XML.
-    pub fn execute(&self, url: &str, action: &str, xml: Vec<u8>) -> ClientResult {
+    pub async fn execute(&self, url: &str, action: &str, xml: Vec<u8>) -> ClientResult {
         //TODO: tentativas de reconexão
-        let mut body = Vec::new();
-        let mut res = self
+        let res = self
             .inner
             .post(url)
             .header("Content-Type", "application/soap+xml; charset=utf-8")
             .header("SOAPAction", action)
             .body(xml)
-            .send()?;
-        res.copy_to(&mut body)?;
-        Ok(body)
+            .send()
+            .await?;
+        Ok(res.bytes().await?.to_vec())
     }
 }
 

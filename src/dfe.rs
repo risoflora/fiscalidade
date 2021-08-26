@@ -57,7 +57,7 @@ impl Dfe {
         self.with_cli_builder(|cli_builder| cli_builder.set_pkcs12(pkcs12))
     }
 
-    pub fn status_servico(self, uf: Uf, ambiente: Ambiente) -> DfeResult {
+    pub async fn status_servico(self, uf: Uf, ambiente: Ambiente) -> DfeResult {
         self.send(
             uf,
             ambiente,
@@ -68,9 +68,15 @@ impl Dfe {
                 xml
             },
         )
+        .await
     }
 
-    pub fn consultar_cadastro(self, uf: Uf, ambiente: Ambiente, documento: Documento) -> DfeResult {
+    pub async fn consultar_cadastro(
+        self,
+        uf: Uf,
+        ambiente: Ambiente,
+        documento: Documento,
+    ) -> DfeResult {
         //TODO: validar doc
         self.send(
             uf,
@@ -89,9 +95,10 @@ impl Dfe {
                 xml
             },
         )
+        .await
     }
 
-    pub fn consultar_xml(self, uf: Uf, ambiente: Ambiente, chave: &str) -> DfeResult {
+    pub async fn consultar_xml(self, uf: Uf, ambiente: Ambiente, chave: &str) -> DfeResult {
         if !util::validar_chave(chave) {
             return Err(DfeError::ChaveInvalida(chave.to_string()));
         }
@@ -105,10 +112,17 @@ impl Dfe {
                 xml
             },
         )
+        .await
     }
 
     #[inline]
-    fn send<F>(self, uf: Uf, ambiente: Ambiente, servico: Servico, envelope_fn: F) -> DfeResult
+    async fn send<F>(
+        self,
+        uf: Uf,
+        ambiente: Ambiente,
+        servico: Servico,
+        envelope_fn: F,
+    ) -> DfeResult
     where
         F: FnOnce(u8, u8, &str, &str, &str, &str) -> String,
     {
@@ -138,11 +152,13 @@ impl Dfe {
             )
             .as_str(),
         );
-        let retorno = cli.execute(
-            ws.as_str(),
-            soap12::format_action(dfe.tipo.as_str(), operacao).as_str(),
-            xml.as_bytes().to_vec(),
-        )?;
+        let retorno = cli
+            .execute(
+                ws.as_str(),
+                soap12::format_action(dfe.tipo.as_str(), operacao).as_str(),
+                xml.as_bytes().to_vec(),
+            )
+            .await?;
         Ok(Xml(retorno))
     }
 

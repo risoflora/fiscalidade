@@ -10,13 +10,15 @@
 //!
 //! use fiscalidade::{Ambiente, Dfe, Pkcs12Certificate, Tipo, Uf, WebServices};
 //!
-//! fn main() -> anyhow::Result<()> {
-//!     let webservices = WebServices::from_file("resources/webservices.ini")?;
-//!     let pkcs12 = Pkcs12Certificate::from_file("resources/certificado.pfx", "minha-senha-secreta")?;
+//! #[tokio::main(flavor = "current_thread")]
+//! async fn main() -> anyhow::Result<()> {
+//!     let webservices = WebServices::from_embedded()?;
+//!     let pkcs12 =
+//!         Pkcs12Certificate::from_file("resources/certificado.pfx", "minha-senha-secreta").await?;
 //!     let dfe = Dfe::new(Tipo::Nfe)
 //!         .set_webservices(webservices)
 //!         .set_pkcs12(pkcs12);
-//!     let xml = dfe.status_servico(Uf::Mt, Ambiente::Homologacao)?;
+//!     let xml = dfe.status_servico(Uf::Mt, Ambiente::Homologacao).await?;
 //!     println!("XML retornado: {}", xml);
 //!     Ok(())
 //! }

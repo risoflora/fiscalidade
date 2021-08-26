@@ -12,14 +12,16 @@ extern crate fiscalidade;
 
 use fiscalidade::{Ambiente, Dfe, Pkcs12Certificate, Tipo, Uf, WebServices};
 
-fn main() -> anyhow::Result<()> {
-    let webservices = WebServices::from_file("resources/webservices.ini")?;
-    let pkcs12 = Pkcs12Certificate::from_file("resources/certificado.pfx", "minha-senha-secreta")?;
+#[tokio::main(flavor = "current_thread")]
+async fn main() -> anyhow::Result<()> {
+    let webservices = WebServices::from_embedded()?;
+    let pkcs12 =
+        Pkcs12Certificate::from_file("resources/certificado.pfx", "minha-senha-secreta").await?;
     let dfe = Dfe::new(Tipo::Nfe)
         .set_webservices(webservices)
         .set_pkcs12(pkcs12);
-    let xml = dfe.status_servico(Uf::Mt, Ambiente::Homologacao)?;
-    println!("XML retornado: {}", String::from_utf8_lossy(&xml));
+    let xml = dfe.status_servico(Uf::Mt, Ambiente::Homologacao).await?;
+    println!("XML retornado: {}", xml);
     Ok(())
 }
 ```
@@ -30,7 +32,8 @@ Adicione isto em seu `Cargo.toml`:
 
 ```ini
 [dependencies]
-fiscalidade = "0.4"
+tokio = { version = "1", features = ["macros"] }
+fiscalidade = "0.5"
 ```
 
 e isto em seu _crate root_:
@@ -50,9 +53,10 @@ extern crate fiscalidade;
 - [x] configuração de _timeout_ da conexão e da comunicação com o webservice
 - [x] embutir arquivo de webservices na biblioteca
 - [x] atualização de webservices (`webservices.ini`)
-- [ ] verificar se recursos (envelope, URLs etc.) estão atualizados
-- [ ] chamadas async
+- [x] verificar se recursos (envelope, URLs etc.) estão atualizados
+- [x] chamadas async
 - [ ] validação e assinatura de XML
+- [ ] adicionar exemplo de consulta de cadastro
 - [ ] tentativas de comunicação com o webservice
 - [ ] mais serviços como envio de lote, consulta de recibo, inutilização, distribuição de DFe, etc.
 - [ ] compressão no envio de lote
