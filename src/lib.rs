@@ -10,7 +10,7 @@
 //!
 //! use fiscalidade::{Ambiente, Dfe, Pkcs12Certificate, Tipo, Uf, WebServices};
 //!
-//! #[tokio::main(flavor = "current_thread")]
+//! #[tokio::main]
 //! async fn main() -> anyhow::Result<()> {
 //!     let webservices = WebServices::from_embedded()?;
 //!     let pkcs12 =

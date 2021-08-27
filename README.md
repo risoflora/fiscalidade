@@ -1,10 +1,12 @@
 # `fiscalidade`
 
-[WIP] Biblioteca Rust para validação, assinatura e transmissão de XMLs para webservices SEFAZ.
+[WIP] Biblioteca Rust para validação, assinatura e transmissão de XMLs para
+webservices SEFAZ.
 
 ## Exemplo
 
-O exemplo abaixo mostra como obter o _status_ do serviço de homologação para o Mato Grosso:
+O exemplo abaixo mostra como obter o _status_ do serviço de homologação para o
+Mato Grosso:
 
 ```rust
 extern crate anyhow;
@@ -12,7 +14,7 @@ extern crate fiscalidade;
 
 use fiscalidade::{Ambiente, Dfe, Pkcs12Certificate, Tipo, Uf, WebServices};
 
-#[tokio::main(flavor = "current_thread")]
+#[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let webservices = WebServices::from_embedded()?;
     let pkcs12 =
@@ -32,7 +34,7 @@ Adicione isto em seu `Cargo.toml`:
 
 ```ini
 [dependencies]
-tokio = { version = "1", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
 fiscalidade = "0.5"
 ```
 
@@ -52,7 +54,8 @@ fiscalidade = "0.5"
 - [ ] validação e assinatura de XML
 - [ ] adicionar exemplo de consulta de cadastro
 - [ ] tentativas de comunicação com o webservice
-- [ ] mais serviços como envio de lote, consulta de recibo, inutilização, distribuição de DFe, etc.
+- [ ] mais serviços como envio de lote, consulta de recibo, inutilização,
+      distribuição de DFe, etc.
 - [ ] compressão no envio de lote
 - [ ] testes
 - [ ] documentação
@@ -68,5 +71,5 @@ Pull Requests e Issues são sempre bem-vindos! =)
 
 `fiscalidade` é distribuída sob qualquer uma das seguintes licenças:
 
-- Apache License 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or <http://www.apache.org/licenses/LICENSE-2.0>)
-- MIT License ([LICENSE-MIT](LICENSE-MIT) or <http://opensource.org/licenses/MIT>)
+- [Apache License 2.0](LICENSE-APACHE)
+- [MIT License](LICENSE-MIT)
