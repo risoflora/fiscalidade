@@ -1,8 +1,5 @@
 //! Exemplo básico de como consultar XML via chave da nota.
 
-extern crate anyhow;
-extern crate fiscalidade;
-
 use std::env;
 
 use fiscalidade::{Ambiente, Dfe, Pkcs12Certificate, Tipo, Uf, WebServices};
@@ -17,7 +14,7 @@ async fn main() -> anyhow::Result<()> {
     #[cfg(feature = "embed_webservices")]
     let webservices = WebServices::from_embedded()?;
     #[cfg(not(feature = "embed_webservices"))]
-    let webservices = WebServices::from_file("resources/webservices.ini")?;
+    let webservices = WebServices::from_file("resources/webservices.ini").await?;
     let pkcs12 = Pkcs12Certificate::from_file(&args[1], &args[2]).await?;
     let dfe = Dfe::new(Tipo::from_str(&args[3]).unwrap_or(Tipo::Nfe))
         .set_webservices(webservices)

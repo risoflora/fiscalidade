@@ -36,12 +36,6 @@ tokio = { version = "1", features = ["macros"] }
 fiscalidade = "0.5"
 ```
 
-e isto em seu _crate root_:
-
-```rust
-extern crate fiscalidade;
-```
-
 ## _Wishlist_
 
 - [x] status do serviço

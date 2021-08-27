@@ -1,9 +1,8 @@
 use std::{io, path::Path, result};
 
-use tokio::fs;
-
 use reqwest::Identity;
 use thiserror::Error;
+use tokio::fs;
 
 /// Objeto para manipulação de certificados PKCS #12.
 #[derive(Debug)]
@@ -43,8 +42,7 @@ impl Pkcs12Certificate {
 
     /// Cria novo objeto PKCS #12 a partir de arquivo informando senha para descriptografar a chave.
     pub async fn from_file<P: AsRef<Path>>(path: P, password: &str) -> Pkcs12CertificateResult {
-        let bytes = fs::read(path).await?;
-        Self::from(&bytes, password)
+        Self::from(&fs::read(path).await?, password)
     }
 
     pub(crate) fn into_inner(self) -> Identity {

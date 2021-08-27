@@ -1,16 +1,22 @@
 /* TODO: migrar para yaml */
 
-use std::{path::Path, result};
+use std::{io, path::Path, result};
 
 use ini::Ini;
 use thiserror::Error;
+use tokio::fs;
 
 use crate::tipos::{self, Ambiente, Modelo, Servico, Uf};
 
 #[derive(Error, Debug)]
 pub enum WebServicesError {
+    /// Erros relacionados a I/O.
+    #[error(transparent)]
+    Io(#[from] io::Error),
+    /// Erros relacionados a INI.
     #[error(transparent)]
     Ini(#[from] ini::Error),
+    /// Erros relacionados a parsing de INI.
     #[error(transparent)]
     IniParse(#[from] ini::ParseError),
 }
@@ -36,8 +42,10 @@ impl WebServices {
         Self::make(Ini::load_from_str(string)?)
     }
 
-    pub fn from_file<P: AsRef<Path>>(path: P) -> WebServicesIniResult {
-        Self::make(Ini::load_from_file(path)?)
+    pub async fn from_file<P: AsRef<Path>>(path: P) -> WebServicesIniResult {
+        Self::make(Ini::load_from_str(
+            fs::read_to_string(path).await?.as_str(),
+        )?)
     }
 
     #[cfg(feature = "embed_webservices")]
