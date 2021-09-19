@@ -40,28 +40,29 @@ fiscalidade = "0.5"
 
 ## _Wishlist_
 
-- [x] status do serviço
-- [x] consulta de cadastro
-- [x] consulta de XML
-- [x] configuração de webservices via arquivo INI
-- [x] leitura de certificado P12
-- [x] conexão segura usando biblioteca TLS _padrão_ do sistema
-- [x] configuração de _timeout_ da conexão e da comunicação com o webservice
-- [x] embutir arquivo de webservices na biblioteca
-- [x] atualização de webservices (`webservices.ini`)
-- [x] verificar se recursos (envelope, URLs etc.) estão atualizados
-- [x] chamadas async
-- [ ] validação e assinatura de XML
-- [ ] adicionar exemplo de consulta de cadastro
-- [ ] tentativas de comunicação com o webservice
-- [ ] mais serviços como envio de lote, consulta de recibo, inutilização,
+- [x] Status do serviço
+- [x] Consulta de cadastro
+- [x] Consulta de XML
+- [x] Configuração de webservices via arquivo INI
+- [x] Leitura de certificado P12
+- [x] Conexão segura usando biblioteca TLS _padrão_ do sistema
+- [x] Configuração de _timeout_ da conexão e da comunicação com o webservice
+- [x] Embutir arquivo de webservices na biblioteca
+- [x] Atualização de webservices (`webservices.ini`)
+- [x] Verificar se recursos (envelope, URLs etc.) estão atualizados
+- [x] Chamadas async
+- [ ] Validação e assinatura de XML
+- [ ] Adicionar exemplo de consulta de cadastro
+- [ ] Tentativas de comunicação com o webservice
+- [ ] Mais serviços como envio de lote, consulta de recibo, inutilização,
       distribuição de DFe, etc.
-- [ ] compressão no envio de lote
-- [ ] testes
-- [ ] documentação
-- [ ] mais exemplos
-- [ ] DANFE
+- [ ] Compressão no envio de lote
+- [ ] Testes
+- [ ] Documentação
+- [ ] Mais exemplos
+- [ ] Proxy
 - [ ] GitHub Actions
+- [ ] DANFE
 
 ## Contribuições
 

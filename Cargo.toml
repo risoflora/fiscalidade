@@ -17,11 +17,11 @@ embed_webservices = []
 
 [dependencies]
 tokio = { version = "1", features = ["fs"] }
-reqwest = { version = "^0.11", features = ["gzip", "native-tls"] }
-rust-ini = { version = "^0.17", features = ["case-insensitive"] }
-thiserror = "^1"
-regex = "^1"
+reqwest = { version = "0.11", features = ["gzip", "native-tls"] }
+rust-ini = { version = "0.17", features = ["case-insensitive"] }
+thiserror = "1"
+regex = "1"
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros"] }
-anyhow = "^1"
+anyhow = "1"
