@@ -57,8 +57,9 @@ impl Dfe {
         self.with_cli_builder(|cli_builder| cli_builder.set_pkcs12(pkcs12))
     }
 
-    pub async fn status_servico(self, uf: Uf, ambiente: Ambiente) -> DfeResult {
+    pub async fn status_servico(self, modelo: Modelo, uf: Uf, ambiente: Ambiente) -> DfeResult {
         self.send(
+            modelo,
             uf,
             ambiente,
             Servico::StatusServico,
@@ -73,12 +74,14 @@ impl Dfe {
 
     pub async fn consultar_cadastro(
         self,
+        modelo: Modelo,
         uf: Uf,
         ambiente: Ambiente,
         documento: Documento,
     ) -> DfeResult {
         //TODO: validar doc
         self.send(
+            modelo,
             uf,
             ambiente,
             Servico::ConsultaCadastro,
@@ -98,11 +101,18 @@ impl Dfe {
         .await
     }
 
-    pub async fn consultar_xml(self, uf: Uf, ambiente: Ambiente, chave: &str) -> DfeResult {
+    pub async fn consultar_xml(
+        self,
+        modelo: Modelo,
+        uf: Uf,
+        ambiente: Ambiente,
+        chave: &str,
+    ) -> DfeResult {
         if !util::validar_chave(chave) {
             return Err(DfeError::ChaveInvalida(chave.to_string()));
         }
         self.send(
+            modelo,
             uf,
             ambiente,
             Servico::ConsultaXml,
@@ -118,6 +128,7 @@ impl Dfe {
     #[inline]
     async fn send<F>(
         self,
+        modelo: Modelo,
         uf: Uf,
         ambiente: Ambiente,
         servico: Servico,
@@ -132,10 +143,10 @@ impl Dfe {
         };
         let dfe = self.with_ws_builder(|ws_builder| {
             ws_builder
+                .set_modelo(modelo)
                 .set_uf(uf)
                 .set_ambiente(ambiente)
                 .set_servico(servico)
-                .set_modelo(Modelo::Nfe)
         });
         let ws_builder = dfe.webservices_builder;
         let cli_builder = dfe.client_builder;

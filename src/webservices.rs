@@ -1,4 +1,4 @@
-/* TODO: migrar para yaml */
+/* TODO: migrar para TOML */
 
 use std::{io, path::Path, result};
 
@@ -92,10 +92,10 @@ pub enum WebServicesBuilderError {
 #[derive(Clone)]
 pub struct WebServicesBuilder {
     ini: Option<WebServices>,
+    modelo: Option<Modelo>,
     uf: Option<Uf>,
     ambiente: Option<Ambiente>,
     servico: Option<Servico>,
-    modelo: Option<Modelo>,
     contingencia: bool,
 }
 
@@ -105,16 +105,21 @@ impl WebServicesBuilder {
     pub fn new() -> Self {
         Self {
             ini: None,
+            modelo: None,
             uf: None,
             ambiente: None,
             servico: None,
-            modelo: None,
             contingencia: false,
         }
     }
 
     pub fn set_ini(mut self, ini: WebServices) -> Self {
         self.ini = Some(ini);
+        self
+    }
+
+    pub fn set_modelo(mut self, modelo: Modelo) -> Self {
+        self.modelo = Some(modelo);
         self
     }
 
@@ -133,11 +138,6 @@ impl WebServicesBuilder {
         self
     }
 
-    pub fn set_modelo(mut self, modelo: Modelo) -> Self {
-        self.modelo = Some(modelo);
-        self
-    }
-
     pub fn set_contingencia(mut self, contingencia: bool) -> Self {
         self.contingencia = contingencia;
         self
@@ -147,6 +147,10 @@ impl WebServicesBuilder {
         let ini = match self.ini {
             Some(ini) => ini,
             None => return Err(WebServicesBuilderError::IniNaoInformado),
+        };
+        let modelo = match self.modelo {
+            Some(modelo) => modelo,
+            None => return Err(WebServicesBuilderError::ModeloNaoInformado),
         };
         let uf = match self.uf {
             Some(uf) => uf,
@@ -159,10 +163,6 @@ impl WebServicesBuilder {
         let servico = match self.servico {
             Some(servico) => servico,
             None => return Err(WebServicesBuilderError::ServicoNaoInformado),
-        };
-        let modelo = match self.modelo {
-            Some(modelo) => modelo,
-            None => return Err(WebServicesBuilderError::ModeloNaoInformado),
         };
         let mut secao = format!("{}_{}_{}", modelo.as_str(), uf.as_str(), ambiente.as_str());
         let url = ini.get_from(secao.as_str(), "Usar");
@@ -181,7 +181,10 @@ impl WebServicesBuilder {
         {
             return Err(WebServicesBuilderError::UfSemWebServiceConsultaCadastro);
         // URLS de ambiente nacional
-        } else if servico == Servico::DistribuicaoDfe || servico == Servico::Manifestacao {
+        } else if servico == Servico::DistribuicaoDfe
+            || servico == Servico::Manifestacao
+            || servico == Servico::Epec
+        {
             secao = if ambiente == Ambiente::Homologacao {
                 "NFe_AN_H".into()
             } else {

@@ -223,6 +223,16 @@ pub enum Modelo {
 
 impl Modelo {
     #[inline]
+    pub fn from_str(tipo: &str) -> Option<Self> {
+        use crate::Modelo::*;
+        match tipo.to_lowercase().as_str() {
+            "nfe" => Some(Nfe),
+            "nfce" => Some(Nfce),
+            _ => None,
+        }
+    }
+
+    #[inline]
     pub fn as_str(&self) -> &'static str {
         use crate::Modelo::*;
         match *self {
