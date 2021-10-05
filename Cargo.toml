@@ -1,6 +1,6 @@
 [package]
 name = "fiscalidade"
-version = "0.5.2"
+version = "0.6.0"
 authors = ["Silvio Clecio (silvioprog) <silvioprog@gmail.com>"]
 license = "MIT/Apache-2.0"
 description = "Biblioteca Rust para validação, assinatura e transmissão de XMLs para webservices SEFAZ."
@@ -18,9 +18,9 @@ embed_webservices = []
 [dependencies]
 tokio = { version = "1.12", features = ["fs"] }
 reqwest = { version = "0.11", features = ["gzip", "native-tls"] }
-rust-ini = { version = "0.17", features = ["case-insensitive"] }
 thiserror = "1.0"
 regex = "1.5"
+toml = "0.5"
 
 [dev-dependencies]
 tokio = { version = "1.12", features = ["macros"] }

@@ -50,7 +50,7 @@ impl Dfe {
     }
 
     pub fn set_webservices(self, webservices: WebServices) -> Self {
-        self.with_ws_builder(|ws_builder| ws_builder.set_ini(webservices))
+        self.with_ws_builder(|ws_builder| ws_builder.set_toml(webservices))
     }
 
     pub fn set_pkcs12(self, pkcs12: Pkcs12Certificate) -> Self {

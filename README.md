@@ -32,10 +32,10 @@ async fn main() {
 
 Adicione isto em seu `Cargo.toml`:
 
-```ini
+```toml
 [dependencies]
 tokio = { version = "1", features = ["full"] }
-fiscalidade = "0.5"
+fiscalidade = "0.6"
 ```
 
 ## _Wishlist_
@@ -43,12 +43,10 @@ fiscalidade = "0.5"
 - [x] Status do serviço
 - [x] Consulta de cadastro
 - [x] Consulta de XML
-- [x] Configuração de webservices via arquivo INI
 - [x] Leitura de certificado P12
 - [x] Conexão segura usando biblioteca TLS _padrão_ do sistema
 - [x] Configuração de _timeout_ da conexão e da comunicação com o webservice
 - [x] Embutir arquivo de webservices na biblioteca
-- [x] Atualização de webservices (`webservices.ini`)
 - [x] Verificar se recursos (envelope, URLs etc.) estão atualizados
 - [x] Chamadas async
 - [ ] Validação e assinatura de XML

@@ -4,30 +4,25 @@
 //!
 //! O exemplo abaixo mostra como obter o _status_ do serviço de homologação para o Mato Grosso:
 //!
-//! ```rust
-//! extern crate anyhow;
-//! extern crate fiscalidade;
+//! ```no_run
+//! use fiscalidade::{Ambiente, Dfe, Modelo, Pkcs12Certificate, Tipo, Uf, WebServices};
 //!
-//! use fiscalidade::{Ambiente, Dfe, Pkcs12Certificate, Tipo, Uf, WebServices};
-//!
-//! #[tokio::main]
-//! async fn main() -> anyhow::Result<()> {
-//!     let webservices = WebServices::from_embedded()?;
-//!     let pkcs12 =
-//!         Pkcs12Certificate::from_file("resources/certificado.pfx", "minha-senha-secreta").await?;
+//! #[tokio::main(flavor = "current_thread")]
+//! async fn main() {
+//!     let webservices = WebServices::from_embedded().unwrap();
+//!     let pkcs12 = Pkcs12Certificate::from_file("resources/certificado.pfx", "minha-senha-secreta")
+//!         .await
+//!         .unwrap();
 //!     let dfe = Dfe::new(Tipo::Nfe)
 //!         .set_webservices(webservices)
 //!         .set_pkcs12(pkcs12);
-//!     let xml = dfe.status_servico(Uf::Mt, Ambiente::Homologacao).await?;
+//!     let xml = dfe
+//!         .status_servico(Modelo::Nfe, Uf::Mt, Ambiente::Homologacao)
+//!         .await
+//!         .unwrap();
 //!     println!("XML retornado: {}", xml);
-//!     Ok(())
 //! }
 //! ```
-
-extern crate ini;
-extern crate regex;
-extern crate reqwest;
-extern crate thiserror;
 
 mod client;
 mod dfe;

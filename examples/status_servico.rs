@@ -14,7 +14,7 @@ async fn main() -> anyhow::Result<()> {
     #[cfg(feature = "embed_webservices")]
     let webservices = WebServices::from_embedded()?;
     #[cfg(not(feature = "embed_webservices"))]
-    let webservices = WebServices::from_file("resources/webservices.ini").await?;
+    let webservices = WebServices::from_file("resources/webservices.toml").await?;
     let pkcs12 = Pkcs12Certificate::from_file(&args[1], &args[2]).await?;
     let dfe = Dfe::new(Tipo::from_str(&args[3]).unwrap())
         .set_webservices(webservices)

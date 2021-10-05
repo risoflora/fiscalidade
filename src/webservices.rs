@@ -1,10 +1,8 @@
-/* TODO: migrar para TOML */
-
 use std::{io, path::Path, result};
 
-use ini::Ini;
 use thiserror::Error;
 use tokio::fs;
+use toml;
 
 use crate::tipos::{self, Ambiente, Modelo, Servico, Uf};
 
@@ -13,65 +11,55 @@ pub enum WebServicesError {
     /// Erros relacionados a I/O.
     #[error(transparent)]
     Io(#[from] io::Error),
-    /// Erros relacionados a INI.
+    /// Erros relacionados a TOML.
     #[error(transparent)]
-    Ini(#[from] ini::Error),
-    /// Erros relacionados a parsing de INI.
-    #[error(transparent)]
-    IniParse(#[from] ini::ParseError),
+    Toml(#[from] toml::de::Error),
 }
 
 #[derive(Clone)]
 pub struct WebServices {
-    inner: Ini,
+    inner: toml::Value,
 }
 
-pub type WebServicesIniResult = result::Result<WebServices, WebServicesError>;
+pub type WebServicesTomlResult = result::Result<WebServices, WebServicesError>;
 
 impl WebServices {
     #[inline]
-    fn make(ini: Ini) -> WebServicesIniResult {
-        Ok(Self { inner: ini })
+    fn make(value: toml::Value) -> WebServicesTomlResult {
+        Ok(Self { inner: value })
     }
 
-    pub fn from_bytes(bytes: &[u8]) -> WebServicesIniResult {
-        Self::make(Ini::load_from_str(&String::from_utf8_lossy(bytes))?)
+    pub fn from_slice(bytes: &[u8]) -> WebServicesTomlResult {
+        Self::make(toml::from_slice(bytes)?)
     }
 
-    pub fn from_str(string: &str) -> WebServicesIniResult {
-        Self::make(Ini::load_from_str(string)?)
+    pub fn from_str(s: &str) -> WebServicesTomlResult {
+        Self::make(toml::from_str(s)?)
     }
 
-    pub async fn from_file<P: AsRef<Path>>(path: P) -> WebServicesIniResult {
-        Self::make(Ini::load_from_str(
-            fs::read_to_string(path).await?.as_str(),
-        )?)
+    pub async fn from_file<P: AsRef<Path>>(path: P) -> WebServicesTomlResult {
+        Self::make(toml::from_slice(&fs::read(path).await?)?)
     }
 
     #[cfg(feature = "embed_webservices")]
-    pub fn from_embedded() -> WebServicesIniResult {
-        Self::make(Ini::load_from_str(include_str!(
-            "../resources/webservices.ini"
+    pub fn from_embedded() -> WebServicesTomlResult {
+        Self::make(toml::from_slice(include_bytes!(
+            "../resources/webservices.toml"
         ))?)
     }
 
     pub fn get_from(&self, section: &str, key: &str) -> Option<&str> {
-        self.inner.get_from(Some(section), key)
-    }
-}
-
-impl Default for WebServices {
-    fn default() -> Self {
-        Self {
-            inner: Default::default(),
-        }
+        let table = self.inner.as_table()?;
+        let pairs = table.get(section)?;
+        let value = pairs.get(key)?;
+        value.as_str()
     }
 }
 
 #[derive(Error, Debug)]
 pub enum WebServicesBuilderError {
-    #[error("INI de webservices não informado")]
-    IniNaoInformado,
+    #[error("TOML de webservices não informado")]
+    TomlNaoInformado,
     #[error("UF não informada")]
     UfNaoInformada,
     #[error("Ambiente não informado")]
@@ -91,7 +79,7 @@ pub enum WebServicesBuilderError {
 
 #[derive(Clone)]
 pub struct WebServicesBuilder {
-    ini: Option<WebServices>,
+    toml: Option<WebServices>,
     modelo: Option<Modelo>,
     uf: Option<Uf>,
     ambiente: Option<Ambiente>,
@@ -104,7 +92,7 @@ pub type WebServicesBuilderResult = result::Result<String, WebServicesBuilderErr
 impl WebServicesBuilder {
     pub fn new() -> Self {
         Self {
-            ini: None,
+            toml: None,
             modelo: None,
             uf: None,
             ambiente: None,
@@ -113,8 +101,8 @@ impl WebServicesBuilder {
         }
     }
 
-    pub fn set_ini(mut self, ini: WebServices) -> Self {
-        self.ini = Some(ini);
+    pub fn set_toml(mut self, toml: WebServices) -> Self {
+        self.toml = Some(toml);
         self
     }
 
@@ -144,9 +132,9 @@ impl WebServicesBuilder {
     }
 
     pub fn build(self) -> WebServicesBuilderResult {
-        let ini = match self.ini {
-            Some(ini) => ini,
-            None => return Err(WebServicesBuilderError::IniNaoInformado),
+        let toml = match self.toml {
+            Some(toml) => toml,
+            None => return Err(WebServicesBuilderError::TomlNaoInformado),
         };
         let modelo = match self.modelo {
             Some(modelo) => modelo,
@@ -165,7 +153,7 @@ impl WebServicesBuilder {
             None => return Err(WebServicesBuilderError::ServicoNaoInformado),
         };
         let mut secao = format!("{}_{}_{}", modelo.as_str(), uf.as_str(), ambiente.as_str());
-        let url = ini.get_from(secao.as_str(), "Usar");
+        let url = toml.get_from(secao.as_str(), "Usar");
         // URLs consulta cadastro
         if servico == Servico::ConsultaCadastro
             && (uf == Uf::Pa
@@ -215,7 +203,7 @@ impl WebServicesBuilder {
                 secao = format!("{}_SVC-AN_{}", modelo.as_str(), ambiente.as_str());
             }
         }
-        let url = match ini.get_from(secao.as_str(), servico.nome().as_str()) {
+        let url = match toml.get_from(secao.as_str(), servico.nome().as_str()) {
             Some(url) => url,
             None => return Err(WebServicesBuilderError::WebServiceNaoEncontrado { uf, servico }),
         };
