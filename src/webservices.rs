@@ -38,12 +38,12 @@ impl WebServices {
     }
 
     pub async fn from_file<P: AsRef<Path>>(path: P) -> WebServicesResult {
-        Self::make(toml::from_slice(&fs::read(path).await?)?)
+        Self::make(toml::from_str(&fs::read_to_string(path).await?)?)
     }
 
     #[cfg(feature = "embed_webservices")]
     pub fn from_embedded() -> WebServicesResult {
-        Self::make(toml::from_slice(include_bytes!(
+        Self::make(toml::from_str(include_str!(
             "../resources/webservices.toml"
         ))?)
     }
