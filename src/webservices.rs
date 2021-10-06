@@ -2,7 +2,7 @@ use std::{io, path::Path, result};
 
 use thiserror::Error;
 use tokio::fs;
-use toml;
+use toml::{de::Error as TomlError, Value as TomlValue};
 
 use crate::tipos::{self, Ambiente, Modelo, Servico, Uf};
 
@@ -13,36 +13,36 @@ pub enum WebServicesError {
     Io(#[from] io::Error),
     /// Erros relacionados a TOML.
     #[error(transparent)]
-    Toml(#[from] toml::de::Error),
+    Toml(#[from] TomlError),
 }
 
 #[derive(Clone)]
 pub struct WebServices {
-    inner: toml::Value,
+    inner: TomlValue,
 }
 
-pub type WebServicesTomlResult = result::Result<WebServices, WebServicesError>;
+pub type WebServicesResult = result::Result<WebServices, WebServicesError>;
 
 impl WebServices {
     #[inline]
-    fn make(value: toml::Value) -> WebServicesTomlResult {
+    fn make(value: TomlValue) -> WebServicesResult {
         Ok(Self { inner: value })
     }
 
-    pub fn from_slice(bytes: &[u8]) -> WebServicesTomlResult {
+    pub fn from_slice(bytes: &[u8]) -> WebServicesResult {
         Self::make(toml::from_slice(bytes)?)
     }
 
-    pub fn from_str(s: &str) -> WebServicesTomlResult {
+    pub fn from_str(s: &str) -> WebServicesResult {
         Self::make(toml::from_str(s)?)
     }
 
-    pub async fn from_file<P: AsRef<Path>>(path: P) -> WebServicesTomlResult {
+    pub async fn from_file<P: AsRef<Path>>(path: P) -> WebServicesResult {
         Self::make(toml::from_slice(&fs::read(path).await?)?)
     }
 
     #[cfg(feature = "embed_webservices")]
-    pub fn from_embedded() -> WebServicesTomlResult {
+    pub fn from_embedded() -> WebServicesResult {
         Self::make(toml::from_slice(include_bytes!(
             "../resources/webservices.toml"
         ))?)
@@ -70,7 +70,7 @@ pub enum WebServicesBuilderError {
     ModeloNaoInformado,
     #[error("UF não possui webservice para consulta de cadastro")]
     UfSemWebServiceConsultaCadastro,
-    #[error("WebService não encontrado para {}: {}", uf, servico)]
+    #[error("WebService não encontrado para {uf}: {servico}")]
     WebServiceNaoEncontrado {
         uf: tipos::Uf,
         servico: tipos::Servico,
@@ -132,29 +132,24 @@ impl WebServicesBuilder {
     }
 
     pub fn build(self) -> WebServicesBuilderResult {
-        let toml = match self.toml {
-            Some(toml) => toml,
-            None => return Err(WebServicesBuilderError::TomlNaoInformado),
-        };
-        let modelo = match self.modelo {
-            Some(modelo) => modelo,
-            None => return Err(WebServicesBuilderError::ModeloNaoInformado),
-        };
-        let uf = match self.uf {
-            Some(uf) => uf,
-            None => return Err(WebServicesBuilderError::UfNaoInformada),
-        };
-        let ambiente = match self.ambiente {
-            Some(ambiente) => ambiente,
-            None => return Err(WebServicesBuilderError::AmbienteNaoInformado),
-        };
-        let servico = match self.servico {
-            Some(servico) => servico,
-            None => return Err(WebServicesBuilderError::ServicoNaoInformado),
-        };
-        let mut secao = format!("{}_{}_{}", modelo.as_str(), uf.as_str(), ambiente.as_str());
+        let toml = self.toml.ok_or(WebServicesBuilderError::TomlNaoInformado)?;
+        let modelo = self
+            .modelo
+            .ok_or(WebServicesBuilderError::ModeloNaoInformado)?;
+        let uf = self.uf.ok_or(WebServicesBuilderError::UfNaoInformada)?;
+        let ambiente = self
+            .ambiente
+            .ok_or(WebServicesBuilderError::AmbienteNaoInformado)?;
+        let servico = self
+            .servico
+            .ok_or(WebServicesBuilderError::ServicoNaoInformado)?;
+        let mut secao = format!("{}_{}_{}", modelo, uf, ambiente);
         let url = toml.get_from(secao.as_str(), "Usar");
-        // URLs consulta cadastro
+
+        // Não há "clean code" neste trecho de código porque precisamos manter compatibilidade com:
+        // https://github.com/Samuel-Oliveira/Java_NFe/blob/df575658da4b7d3911a8c15ffb2841184ad8cfeb/src/main/java/br/com/swconsultoria/nfe/util/WebServiceUtil.java#L71
+
+        // URL consulta cadastro
         if servico == Servico::ConsultaCadastro
             && (uf == Uf::Pa
                 || uf == Uf::Am
@@ -168,21 +163,22 @@ impl WebServicesBuilder {
                 || uf == Uf::To)
         {
             return Err(WebServicesBuilderError::UfSemWebServiceConsultaCadastro);
-        // URLS de ambiente nacional
-        } else if servico == Servico::DistribuicaoDfe
+        }
+        // URL de ambiente nacional
+        if servico == Servico::DistribuicaoDfe
             || servico == Servico::Manifestacao
             || servico == Servico::Epec
         {
             secao = if ambiente == Ambiente::Homologacao {
-                "NFe_AN_H".into()
+                "NFe_AN_H".to_string()
             } else {
-                "NFe_AN_P".into()
+                "NFe_AN_P".to_string()
             };
         } else if servico != Servico::UrlConsultaNfce
             && servico != Servico::UrlQrCode
             && url.is_some()
         {
-            secao = url.unwrap().into()
+            secao = url.unwrap().to_string()
         } else if self.contingencia {
             // SVC-RS
             if uf == Uf::Go
@@ -197,16 +193,16 @@ impl WebServicesBuilder {
                 || uf == Uf::Pi
                 || uf == Uf::Pr
             {
-                secao = format!("{}_SVRS_{}", modelo.as_str(), ambiente.as_str());
+                secao = format!("{}_SVRS_{}", modelo, ambiente);
             // SVC-AN
             } else {
-                secao = format!("{}_SVC-AN_{}", modelo.as_str(), ambiente.as_str());
+                secao = format!("{}_SVC-AN_{}", modelo, ambiente);
             }
         }
-        let url = match toml.get_from(secao.as_str(), servico.nome().as_str()) {
-            Some(url) => url,
-            None => return Err(WebServicesBuilderError::WebServiceNaoEncontrado { uf, servico }),
-        };
+
+        let url = toml
+            .get_from(secao.as_str(), servico.chave().as_str())
+            .ok_or(WebServicesBuilderError::WebServiceNaoEncontrado { uf, servico })?;
         Ok(url.to_string())
     }
 }

@@ -5,7 +5,7 @@ use thiserror::Error;
 use crate::{
     client::{ClientBuilder, ClientError},
     soap12,
-    tipos::{Ambiente, Documento, Modelo, Servico, Tipo, Uf},
+    tipos::{Ambiente, Documento, Modelo, Servico, Uf},
     util,
     webservices::{WebServices, WebServicesBuilder, WebServicesBuilderError},
     Pkcs12Certificate,
@@ -26,7 +26,6 @@ pub enum DfeError {
 pub struct Dfe {
     webservices_builder: WebServicesBuilder,
     client_builder: ClientBuilder,
-    tipo: Tipo,
 }
 
 #[derive(Debug)]
@@ -41,11 +40,10 @@ impl fmt::Display for Xml {
 }
 
 impl Dfe {
-    pub fn new(tipo: Tipo) -> Self {
+    pub fn new() -> Self {
         Self {
             webservices_builder: WebServicesBuilder::new(),
             client_builder: ClientBuilder::new(),
-            tipo,
         }
     }
 
@@ -63,8 +61,8 @@ impl Dfe {
             uf,
             ambiente,
             Servico::StatusServico,
-            |cuf, tp_amb, tipo, _, versao, operacao| {
-                let xml = soap12::format_cons_stat_serv(cuf, tp_amb, tipo, versao, operacao);
+            |cuf, tp_amb, versao, operacao| {
+                let xml = soap12::format_cons_stat_serv(cuf, tp_amb, versao, operacao);
                 //TODO: is_valid(versao, xml, "consStatServ");
                 xml
             },
@@ -77,7 +75,7 @@ impl Dfe {
         modelo: Modelo,
         uf: Uf,
         ambiente: Ambiente,
-        documento: Documento,
+        documento: Documento<'_>,
     ) -> DfeResult {
         //TODO: validar doc
         self.send(
@@ -85,13 +83,12 @@ impl Dfe {
             uf,
             ambiente,
             Servico::ConsultaCadastro,
-            |cuf, _, tipo, _, versao, operacao| {
+            |cuf, _, versao, operacao| {
                 let xml = soap12::format_cons_cad(
                     cuf,
-                    tipo,
                     versao,
                     operacao,
-                    documento.conteudo().as_str(),
+                    documento.as_str(),
                     documento.tipo().as_str(),
                 );
                 //TODO: is_valid(versao, xml, "consCad");
@@ -116,8 +113,8 @@ impl Dfe {
             uf,
             ambiente,
             Servico::ConsultaXml,
-            |_, tp_amb, tipo, tipo_nome, versao, operacao| {
-                let xml = soap12::format_cons_sit(tp_amb, tipo, tipo_nome, versao, operacao, chave);
+            |_, tp_amb, versao, operacao| {
+                let xml = soap12::format_cons_sit(tp_amb, versao, operacao, chave);
                 //TODO: is_valid(versao, xml, "consSit{nome}");
                 xml
             },
@@ -135,12 +132,9 @@ impl Dfe {
         envelope_fn: F,
     ) -> DfeResult
     where
-        F: FnOnce(u8, u8, &str, &str, &str, &str) -> String,
+        F: FnOnce(u8, u8, &str, &str) -> String,
     {
-        let operacao = match servico.operacao() {
-            Some(operacao) => operacao,
-            None => return Err(DfeError::OperacaoInexistente),
-        };
+        let operacao = servico.operacao().ok_or(DfeError::OperacaoInexistente)?;
         let dfe = self.with_ws_builder(|ws_builder| {
             ws_builder
                 .set_modelo(modelo)
@@ -156,8 +150,6 @@ impl Dfe {
             envelope_fn(
                 uf.cuf(),
                 ambiente.tp_amb(),
-                dfe.tipo.as_str(),
-                dfe.tipo.nome(),
                 servico.versao_url().as_str(),
                 operacao,
             )
@@ -166,7 +158,7 @@ impl Dfe {
         let retorno = cli
             .execute(
                 ws.as_str(),
-                soap12::format_action(dfe.tipo.as_str(), operacao).as_str(),
+                soap12::format_action(operacao).as_str(),
                 xml.as_bytes().to_vec(),
             )
             .await?;

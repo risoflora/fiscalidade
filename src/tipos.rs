@@ -10,8 +10,8 @@ pub enum VersaoUrl {
 
 impl VersaoUrl {
     #[inline]
-    pub fn as_str(&self) -> &'static str {
-        use crate::VersaoUrl::*;
+    pub fn as_str(&self) -> &str {
+        use super::VersaoUrl::*;
         match *self {
             Ver100 => "1.00",
             Ver101 => "1.01",
@@ -22,8 +22,8 @@ impl VersaoUrl {
 }
 
 impl fmt::Display for VersaoUrl {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(fmt, "{}", self.as_str())
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.as_str())
     }
 }
 
@@ -59,15 +59,15 @@ pub enum Uf {
 }
 
 impl fmt::Display for Uf {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(fmt, "{}", self.as_str())
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.as_str())
     }
 }
 
 impl Uf {
     #[inline]
     pub fn from_str(uf: &str) -> Option<Self> {
-        use crate::Uf::*;
+        use super::Uf::*;
         match uf.to_uppercase().as_str() {
             "RO" => Some(Ro),
             "AC" => Some(Ac),
@@ -101,8 +101,8 @@ impl Uf {
     }
 
     #[inline]
-    pub fn as_str(&self) -> &'static str {
-        use crate::Uf::*;
+    pub fn as_str(&self) -> &str {
+        use super::Uf::*;
         match *self {
             Ro => "RO",
             Ac => "AC",
@@ -136,7 +136,7 @@ impl Uf {
 
     #[inline]
     pub fn cuf(&self) -> u8 {
-        use crate::Uf::*;
+        use super::Uf::*;
         match *self {
             Ro => 11,
             Ac => 12,
@@ -177,8 +177,8 @@ pub enum Ambiente {
 
 impl Ambiente {
     #[inline]
-    pub fn as_str(&self) -> &'static str {
-        use crate::Ambiente::*;
+    pub fn as_str(&self) -> &str {
+        use super::Ambiente::*;
         match *self {
             Producao => "P",
             Homologacao => "H",
@@ -187,11 +187,8 @@ impl Ambiente {
 
     #[inline]
     pub fn from_str(ambiente: &str) -> Option<Self> {
-        use crate::Ambiente::*;
-        let c = match ambiente.chars().next() {
-            Some(c) => c,
-            None => return None,
-        };
+        use super::Ambiente::*;
+        let c = ambiente.chars().next()?;
         match c {
             'P' | 'p' => Some(Producao),
             'H' | 'h' => Some(Homologacao),
@@ -201,7 +198,7 @@ impl Ambiente {
 
     #[inline]
     pub fn tp_amb(&self) -> u8 {
-        use crate::Ambiente::*;
+        use super::Ambiente::*;
         match *self {
             Producao => 1,
             Homologacao => 2,
@@ -210,8 +207,8 @@ impl Ambiente {
 }
 
 impl fmt::Display for Ambiente {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(fmt, "{}", self.as_str())
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.as_str())
     }
 }
 
@@ -224,7 +221,7 @@ pub enum Modelo {
 impl Modelo {
     #[inline]
     pub fn from_str(tipo: &str) -> Option<Self> {
-        use crate::Modelo::*;
+        use super::Modelo::*;
         match tipo.to_lowercase().as_str() {
             "nfe" => Some(Nfe),
             "nfce" => Some(Nfce),
@@ -233,8 +230,8 @@ impl Modelo {
     }
 
     #[inline]
-    pub fn as_str(&self) -> &'static str {
-        use crate::Modelo::*;
+    pub fn as_str(&self) -> &str {
+        use super::Modelo::*;
         match *self {
             Nfe => "NFe",
             Nfce => "NFCe",
@@ -243,7 +240,7 @@ impl Modelo {
 
     #[inline]
     pub fn codigo(&self) -> u8 {
-        use crate::Modelo::*;
+        use super::Modelo::*;
         match *self {
             Nfe => 55,
             Nfce => 65,
@@ -252,54 +249,8 @@ impl Modelo {
 }
 
 impl fmt::Display for Modelo {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(fmt, "{}", self.as_str())
-    }
-}
-
-#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub enum Tipo {
-    Nfe,
-    Cte,
-    Mdfe,
-}
-
-impl Tipo {
-    #[inline]
-    pub fn from_str(tipo: &str) -> Option<Self> {
-        use crate::Tipo::*;
-        match tipo.to_lowercase().as_str() {
-            "nfe" => Some(Nfe),
-            "cte" => Some(Cte),
-            "mdfe" => Some(Mdfe),
-            _ => None,
-        }
-    }
-
-    #[inline]
-    pub fn as_str(&self) -> &'static str {
-        use crate::Tipo::*;
-        match *self {
-            Nfe => "nfe",
-            Cte => "cte",
-            Mdfe => "mdfe",
-        }
-    }
-
-    #[inline]
-    pub fn nome(&self) -> &'static str {
-        use crate::Tipo::*;
-        match *self {
-            Nfe => "NFe",
-            Cte => "CTe",
-            Mdfe => "MDFe",
-        }
-    }
-}
-
-impl fmt::Display for Tipo {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(fmt, "{}", self.as_str())
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.as_str())
     }
 }
 
@@ -322,32 +273,32 @@ pub enum Servico {
 }
 
 impl fmt::Display for Servico {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        use crate::Servico::*;
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        use super::Servico::*;
         match *self {
-            StatusServico => write!(fmt, "Status Serviço"),
-            Envio => write!(fmt, "Envio"),
-            ConsultaRecibo => write!(fmt, "Consulta Recibo"),
-            ConsultaCadastro => write!(fmt, "Consulta Cadastro"),
-            Cce => write!(fmt, "CC-e"),
-            Epec => write!(fmt, "EPEC"),
-            Manifestacao => write!(fmt, "Manifestação"),
-            Cancelamento => write!(fmt, "Cancelamento"),
-            CancelamentoSubstituicao => write!(fmt, "Cancelamento Substituição"),
-            Inutilizacao => write!(fmt, "Inutilização"),
-            ConsultaXml => write!(fmt, "Consulta XML"),
-            DistribuicaoDfe => write!(fmt, "Distribuição DF-e"),
-            UrlQrCode => write!(fmt, "URL QRCode"),
-            UrlConsultaNfce => write!(fmt, "URL Consulta NFC-e"),
+            StatusServico => write!(f, "Status Serviço"),
+            Envio => write!(f, "Envio"),
+            ConsultaRecibo => write!(f, "Consulta Recibo"),
+            ConsultaCadastro => write!(f, "Consulta Cadastro"),
+            Cce => write!(f, "CC-e"),
+            Epec => write!(f, "EPEC"),
+            Manifestacao => write!(f, "Manifestação"),
+            Cancelamento => write!(f, "Cancelamento"),
+            CancelamentoSubstituicao => write!(f, "Cancelamento Substituição"),
+            Inutilizacao => write!(f, "Inutilização"),
+            ConsultaXml => write!(f, "Consulta XML"),
+            DistribuicaoDfe => write!(f, "Distribuição DF-e"),
+            UrlQrCode => write!(f, "URL QRCode"),
+            UrlConsultaNfce => write!(f, "URL Consulta NFC-e"),
         }
     }
 }
 
 impl Servico {
     #[inline]
-    pub fn nome(&self) -> String {
-        use crate::Servico::*;
-        let ver = self.versao_url().as_str();
+    pub fn chave(&self) -> String {
+        use super::Servico::*;
+        let ver = self.versao_url();
         match *self {
             StatusServico => format!("NfeStatusServico_{}", ver),
             Envio => format!("NfeAutorizacao_{}", ver),
@@ -368,7 +319,7 @@ impl Servico {
 
     #[inline]
     pub fn operacao(&self) -> Option<&str> {
-        use crate::Servico::*;
+        use super::Servico::*;
         match *self {
             StatusServico => Some("NFeStatusServico4"),
             Envio => Some("NFeAutorizacao4"),
@@ -389,8 +340,8 @@ impl Servico {
 
     #[inline]
     pub fn versao_url(&self) -> VersaoUrl {
-        use crate::Servico::*;
-        use crate::VersaoUrl::*;
+        use super::Servico::*;
+        use super::VersaoUrl::*;
         match *self {
             StatusServico => Ver400,
             Envio => Ver400,
@@ -419,8 +370,8 @@ pub enum TipoDocumento {
 
 impl TipoDocumento {
     #[inline]
-    pub fn as_str(&self) -> &'static str {
-        use crate::TipoDocumento::*;
+    pub fn as_str(&self) -> &str {
+        use super::TipoDocumento::*;
         match *self {
             Cpf => "CPF",
             Cnpj => "CNPJ",
@@ -430,22 +381,22 @@ impl TipoDocumento {
 }
 
 impl fmt::Display for TipoDocumento {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(fmt, "{}", self.as_str())
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.as_str())
     }
 }
 
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub struct Documento {
-    conteudo: Box<str>,
+pub struct Documento<'a> {
+    conteudo: &'a str,
     tipo: TipoDocumento,
 }
 
-impl Documento {
+impl<'a> Documento<'a> {
     #[inline]
     pub fn from_cpf(cpf: &str) -> Documento {
         Documento {
-            conteudo: Box::from(cpf),
+            conteudo: cpf,
             tipo: TipoDocumento::Cpf,
         }
     }
@@ -453,7 +404,7 @@ impl Documento {
     #[inline]
     pub fn from_cnpj(cnpj: &str) -> Documento {
         Documento {
-            conteudo: Box::from(cnpj),
+            conteudo: cnpj,
             tipo: TipoDocumento::Cnpj,
         }
     }
@@ -461,7 +412,7 @@ impl Documento {
     #[inline]
     pub fn from_ie(ie: &str) -> Documento {
         Documento {
-            conteudo: Box::from(ie),
+            conteudo: ie,
             tipo: TipoDocumento::Ie,
         }
     }
@@ -472,13 +423,13 @@ impl Documento {
     }
 
     #[inline]
-    pub fn conteudo(&self) -> String {
-        self.conteudo.to_string()
+    pub fn as_str(&self) -> &str {
+        self.conteudo
     }
 }
 
-impl fmt::Display for Documento {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(fmt, "{}", self.conteudo)
+impl fmt::Display for Documento<'_> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.as_str())
     }
 }

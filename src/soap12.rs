@@ -1,25 +1,20 @@
-#[inline]
-pub fn format_portal(tipo: &str) -> String {
-    format!("http://www.portalfiscal.inf.br/{tipo}", tipo = tipo)
-}
+const PORTAL_FISCAL: &str = "http://www.portalfiscal.inf.br/nfe";
 
 #[inline]
-pub fn format_action(tipo: &str, operacao: &str) -> String {
+pub fn format_action(operacao: &str) -> String {
     format!(
-        "{tipo}/wsdl/{operacao}",
-        tipo = format_portal(tipo),
+        "{portal}/wsdl/{operacao}",
+        portal = PORTAL_FISCAL,
         operacao = operacao
     )
 }
 
 #[inline]
-pub fn format_dados_msg(tipo: &str, dados: &str, operacao: &str) -> String {
+pub fn format_dados_msg(dados: &str, operacao: &str) -> String {
     format!(
-        "<{tipo_prefixo}DadosMsg xmlns=\"{namespace}\">{dados}</{tipo_sufixo}DadosMsg>",
-        tipo_prefixo = tipo,
-        namespace = format_action(tipo, operacao),
+        "<nfeDadosMsg xmlns=\"{namespace}\">{dados}</nfeDadosMsg>",
+        namespace = format_action(operacao),
         dados = dados,
-        tipo_sufixo = tipo
     )
 }
 
@@ -44,15 +39,8 @@ pub fn format_xml(envelope: &str) -> String {
 }
 
 #[inline]
-pub fn format_cons_stat_serv(
-    cuf: u8,
-    tp_amb: u8,
-    tipo: &str,
-    versao: &str,
-    operacao: &str,
-) -> String {
+pub fn format_cons_stat_serv(cuf: u8, tp_amb: u8, versao: &str, operacao: &str) -> String {
     format_dados_msg(
-        tipo,
         format!(
             concat!(
                 "<consStatServ xmlns=\"{portal}\" versao=\"{versao}\">",
@@ -61,7 +49,7 @@ pub fn format_cons_stat_serv(
                 "<xServ>STATUS</xServ>",
                 "</consStatServ>"
             ),
-            portal = format_portal(tipo),
+            portal = PORTAL_FISCAL,
             versao = versao,
             tp_amb = tp_amb,
             cuf = cuf
@@ -72,16 +60,8 @@ pub fn format_cons_stat_serv(
 }
 
 #[inline]
-pub fn format_cons_cad(
-    cuf: u8,
-    tipo: &str,
-    versao: &str,
-    operacao: &str,
-    doc: &str,
-    doc_tag: &str,
-) -> String {
+pub fn format_cons_cad(cuf: u8, versao: &str, operacao: &str, doc: &str, doc_tag: &str) -> String {
     format_dados_msg(
-        tipo,
         format!(
             concat!(
                 "<ConsCad xmlns=\"{portal}\" versao=\"{versao}\">",
@@ -92,7 +72,7 @@ pub fn format_cons_cad(
                 "</infCons>",
                 "</ConsCad>"
             ),
-            portal = format_portal(tipo),
+            portal = PORTAL_FISCAL,
             versao = versao,
             cuf = cuf,
             doc_tag_prefixo = doc_tag,
@@ -105,32 +85,20 @@ pub fn format_cons_cad(
 }
 
 #[inline]
-pub fn format_cons_sit(
-    tp_amb: u8,
-    tipo: &str,
-    tipo_nome: &str,
-    versao: &str,
-    operacao: &str,
-    ch: &str,
-) -> String {
+pub fn format_cons_sit(tp_amb: u8, versao: &str, operacao: &str, ch: &str) -> String {
     format_dados_msg(
-        tipo,
         format!(
             concat!(
-                "<consSit{prefixo} xmlns=\"{portal}\" versao=\"{versao}\">",
+                "<consSitNFe xmlns=\"{portal}\" versao=\"{versao}\">",
                 "<tpAmb>{tp_amb}</tpAmb>",
                 "<xServ>CONSULTAR</xServ>",
-                "<ch{ch_prefixo}>{ch}</ch{ch_sufixo}>",
-                "</consSit{sufixo}>"
+                "<chNFe>{ch}</chNFe>",
+                "</consSitNFe>"
             ),
-            prefixo = tipo_nome,
-            portal = format_portal(tipo),
+            portal = PORTAL_FISCAL,
             versao = versao,
             tp_amb = tp_amb,
-            ch_prefixo = tipo_nome,
             ch = ch,
-            ch_sufixo = tipo_nome,
-            sufixo = tipo_nome,
         )
         .as_str(),
         operacao,

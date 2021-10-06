@@ -9,7 +9,7 @@ O exemplo abaixo mostra como obter o _status_ do serviço de homologação para 
 Mato Grosso:
 
 ```rust
-use fiscalidade::{Ambiente, Dfe, Modelo, Pkcs12Certificate, Tipo, Uf, WebServices};
+use fiscalidade::{Ambiente, Dfe, Modelo, Pkcs12Certificate, Uf, WebServices};
 
 #[tokio::main]
 async fn main() {
@@ -17,9 +17,7 @@ async fn main() {
     let pkcs12 = Pkcs12Certificate::from_file("resources/certificado.pfx", "minha-senha-secreta")
         .await
         .unwrap();
-    let dfe = Dfe::new(Tipo::Nfe)
-        .set_webservices(webservices)
-        .set_pkcs12(pkcs12);
+    let dfe = Dfe::new().set_webservices(webservices).set_pkcs12(pkcs12);
     let xml = dfe
         .status_servico(Modelo::Nfe, Uf::Mt, Ambiente::Homologacao)
         .await
@@ -35,7 +33,7 @@ Adicione isto em seu `Cargo.toml`:
 ```toml
 [dependencies]
 tokio = { version = "1", features = ["full"] }
-fiscalidade = "0.6"
+fiscalidade = "0.7"
 ```
 
 ## _Wishlist_
