@@ -2,9 +2,16 @@ use regex::Regex;
 
 use crate::tipos::{Ambiente, Uf};
 
-/// Valida chave de nota usando regra `^[0-9]{44}$` extraída de arquivo XSD da SEFAZ.
+/// Valida chave de nota usando regra `^[0-9]{44}$` extraída de arquivo "tiposBasico_v4.00.xsd" da SEFAZ.
 pub fn validar_chave(chave: &str) -> bool {
     Regex::new("^[0-9]{44}$")
+        .map(|re| re.is_match(chave))
+        .unwrap_or_default()
+}
+
+/// Valida número de recibo usando regra `^[0-9]{15}$` extraída de arquivo "tiposBasico_v4.00.xsd" da SEFAZ.
+pub fn validar_recibo(chave: &str) -> bool {
+    Regex::new("^[0-9]{15}$")
         .map(|re| re.is_match(chave))
         .unwrap_or_default()
 }

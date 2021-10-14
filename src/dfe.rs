@@ -21,6 +21,8 @@ pub enum DfeError {
     OperacaoInexistente,
     #[error("Chave de NF-e inválida: {0}")]
     ChaveInvalida(String),
+    #[error("Código de recibo inválido: {0}")]
+    ReciboInvalido(String),
 }
 
 pub struct Dfe {
@@ -63,7 +65,52 @@ impl Dfe {
             Servico::StatusServico,
             |cuf, tp_amb, versao, operacao| {
                 let xml = soap12::format_cons_stat_serv(cuf, tp_amb, versao, operacao);
-                //TODO: is_valid(versao, xml, "consStatServ");
+                xml
+            },
+        )
+        .await
+    }
+
+    pub async fn consultar_protocolo(
+        self,
+        modelo: Modelo,
+        uf: Uf,
+        ambiente: Ambiente,
+        chave: &str,
+    ) -> DfeResult {
+        if !util::validar_chave(chave) {
+            return Err(DfeError::ChaveInvalida(chave.to_string()));
+        }
+        self.send(
+            modelo,
+            uf,
+            ambiente,
+            Servico::ConsultaProtocolo,
+            |_, tp_amb, versao, operacao| {
+                let xml = soap12::format_cons_sit(tp_amb, versao, operacao, chave);
+                xml
+            },
+        )
+        .await
+    }
+
+    pub async fn consultar_autorizacao(
+        self,
+        modelo: Modelo,
+        uf: Uf,
+        ambiente: Ambiente,
+        recibo: &str,
+    ) -> DfeResult {
+        if !util::validar_recibo(recibo) {
+            return Err(DfeError::ReciboInvalido(recibo.to_string()));
+        }
+        self.send(
+            modelo,
+            uf,
+            ambiente,
+            Servico::ConsultaAutorizacao,
+            |_, tp_amb, versao, operacao| {
+                let xml = soap12::format_cons_reci(tp_amb, versao, operacao, recibo);
                 xml
             },
         )
@@ -91,31 +138,6 @@ impl Dfe {
                     documento.as_str(),
                     documento.tipo().as_str(),
                 );
-                //TODO: is_valid(versao, xml, "consCad");
-                xml
-            },
-        )
-        .await
-    }
-
-    pub async fn consultar_xml(
-        self,
-        modelo: Modelo,
-        uf: Uf,
-        ambiente: Ambiente,
-        chave: &str,
-    ) -> DfeResult {
-        if !util::validar_chave(chave) {
-            return Err(DfeError::ChaveInvalida(chave.to_string()));
-        }
-        self.send(
-            modelo,
-            uf,
-            ambiente,
-            Servico::ConsultaXml,
-            |_, tp_amb, versao, operacao| {
-                let xml = soap12::format_cons_sit(tp_amb, versao, operacao, chave);
-                //TODO: is_valid(versao, xml, "consSit{nome}");
                 xml
             },
         )

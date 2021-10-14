@@ -60,6 +60,47 @@ pub fn format_cons_stat_serv(cuf: u8, tp_amb: u8, versao: &str, operacao: &str) 
 }
 
 #[inline]
+pub fn format_cons_sit(tp_amb: u8, versao: &str, operacao: &str, ch: &str) -> String {
+    format_dados_msg(
+        format!(
+            concat!(
+                "<consSitNFe xmlns=\"{portal}\" versao=\"{versao}\">",
+                "<tpAmb>{tp_amb}</tpAmb>",
+                "<xServ>CONSULTAR</xServ>",
+                "<chNFe>{ch}</chNFe>",
+                "</consSitNFe>"
+            ),
+            portal = PORTAL_FISCAL,
+            versao = versao,
+            tp_amb = tp_amb,
+            ch = ch,
+        )
+        .as_str(),
+        operacao,
+    )
+}
+
+#[inline]
+pub fn format_cons_reci(tp_amb: u8, versao: &str, operacao: &str, rec: &str) -> String {
+    format_dados_msg(
+        format!(
+            concat!(
+                "<consReciNFe xmlns=\"{portal}\" versao=\"{versao}\">",
+                "<tpAmb>{tp_amb}</tpAmb>",
+                "<nRec>{rec}</nRec>",
+                "</consReciNFe>"
+            ),
+            portal = PORTAL_FISCAL,
+            versao = versao,
+            tp_amb = tp_amb,
+            rec = rec,
+        )
+        .as_str(),
+        operacao,
+    )
+}
+
+#[inline]
 pub fn format_cons_cad(cuf: u8, versao: &str, operacao: &str, doc: &str, doc_tag: &str) -> String {
     format_dados_msg(
         format!(
@@ -78,27 +119,6 @@ pub fn format_cons_cad(cuf: u8, versao: &str, operacao: &str, doc: &str, doc_tag
             doc_tag_prefixo = doc_tag,
             doc = doc,
             doc_tag_sufixo = doc_tag,
-        )
-        .as_str(),
-        operacao,
-    )
-}
-
-#[inline]
-pub fn format_cons_sit(tp_amb: u8, versao: &str, operacao: &str, ch: &str) -> String {
-    format_dados_msg(
-        format!(
-            concat!(
-                "<consSitNFe xmlns=\"{portal}\" versao=\"{versao}\">",
-                "<tpAmb>{tp_amb}</tpAmb>",
-                "<xServ>CONSULTAR</xServ>",
-                "<chNFe>{ch}</chNFe>",
-                "</consSitNFe>"
-            ),
-            portal = PORTAL_FISCAL,
-            versao = versao,
-            tp_amb = tp_amb,
-            ch = ch,
         )
         .as_str(),
         operacao,
