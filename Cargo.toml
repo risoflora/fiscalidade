@@ -9,7 +9,7 @@ repository = "https://github.com/risoflora/fiscalidade"
 readme = "README.md"
 keywords = ["nfe", "sped", "sefaz"]
 categories = ["network-programming", "web-programming"]
-edition = "2018"
+edition = "2021"
 
 [features]
 default = ["embed_webservices"]
