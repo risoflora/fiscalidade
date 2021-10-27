@@ -48,6 +48,7 @@ fiscalidade = "0.7"
 - [x] Verificar se recursos (envelope, URLs etc.) estão atualizados
 - [x] Chamadas async
 - [ ] Validação e assinatura de XML
+- [ ] Implementar "health check"
 - [ ] Adicionar exemplo de consulta de cadastro
 - [ ] Tentativas de comunicação com o webservice
 - [ ] Mais serviços como envio de lote, consulta de recibo, inutilização,
