@@ -1,4 +1,4 @@
-use std::{io, path::Path, result};
+use std::{io, path::Path, result, str};
 
 use thiserror::Error;
 use tokio::fs;
@@ -30,7 +30,7 @@ impl WebServices {
     }
 
     pub fn from_slice(bytes: &[u8]) -> WebServicesResult {
-        Self::make(toml::from_slice(bytes)?)
+        Self::make(toml::from_slice(str::from_utf8(bytes))?)
     }
 
     pub fn from_str(s: &str) -> WebServicesResult {
