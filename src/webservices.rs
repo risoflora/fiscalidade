@@ -30,7 +30,7 @@ impl WebServices {
     }
 
     pub fn from_slice(bytes: &[u8]) -> WebServicesResult {
-        Self::make(toml::from_slice(str::from_utf8(bytes))?)
+        Self::make(toml::from_str(str::from_utf8(bytes).unwrap())?)
     }
 
     pub fn from_str(s: &str) -> WebServicesResult {
