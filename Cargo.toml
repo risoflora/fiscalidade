@@ -20,7 +20,7 @@ tokio = { version = "1.12", features = ["fs"] }
 reqwest = { version = "0.12", features = ["gzip", "native-tls"] }
 thiserror = "2.0"
 regex = "1.5"
-toml = "0.5"
+toml = "0.8"
 
 [dev-dependencies]
 tokio = { version = "1.12", features = ["macros"] }
